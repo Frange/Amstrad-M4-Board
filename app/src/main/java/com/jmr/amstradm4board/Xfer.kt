@@ -2,12 +2,26 @@ package com.jmr.amstradm4board
 
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.IOException
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
-class Xfer(private val ip: String) {
+class Xfer(
+    private val ip: String
+) {
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("http://$ip/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
-    private val client = OkHttpClient()
+    private val xferApi = retrofit.create(XferApi::class.java)
+
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)) // Para depuración
+        .build()
 
     private fun getUrl(path: String): String {
         return "http://$ip/$path"
@@ -17,46 +31,49 @@ class Xfer(private val ip: String) {
         return Headers.Builder().add("User-Agent", "cpcxfer").build()
     }
 
-    fun resetM4() {
-        val url = getUrl("config.cgi?mres")
-        val request = Request.Builder()
-            .url(url)
-            .headers(getHeaders())
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                println("Reset M4 failed")
+    // Funciones usando Retrofit
+    suspend fun resetM4() {
+        try {
+            val response = xferApi.resetM4()
+            if (response.isSuccessful) {
+                println("M4 Reset")
+            } else {
+                println("Reset M4 failed: ${response.errorBody()?.string()}")
             }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    println("M4 Reset")
-                }
-            }
-        })
+        } catch (e: Exception) {
+            println("Exception: $e")
+        }
     }
 
-    fun resetCPC() {
-        val url = getUrl("config.cgi?cres")
-        val request = Request.Builder()
-            .url(url)
-            .headers(getHeaders())
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                println("Reset CPC failed")
+    suspend fun resetCPC() {
+        try {
+            val response = xferApi.resetCPC()
+            if (response.isSuccessful) {
+                println("CPC Reset")
+            } else {
+                println("Reset CPC failed: ${response.errorBody()?.string()}")
             }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    println("CPC Reset")
-                }
-            }
-        })
+        } catch (e: Exception) {
+            println("Exception: $e")
+        }
     }
 
+    suspend fun listFiles(folder: String): List<String>? {
+        return try {
+            val response = xferApi.listFiles(folder)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                println("Failed to list files: ${response.errorBody()?.string()}")
+                null
+            }
+        } catch (e: Exception) {
+            println("Exception: $e")
+            null
+        }
+    }
+
+    // Las funciones que no usan Retrofit
     fun uploadFile(filePath: String, destination: String) {
         val file = File(filePath)
         if (!file.exists()) {
@@ -160,32 +177,6 @@ class Xfer(private val ip: String) {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     println("Directory created: $dirPath")
-                }
-            }
-        })
-    }
-
-    fun listFiles(cpcFolder: String) {
-        val url = HttpUrl.Builder()
-            .scheme("http")
-            .host(ip)
-            .addPathSegment("config.cgi")
-            .addQueryParameter("ls", cpcFolder)
-            .build()
-
-        val request = Request.Builder()
-            .url(url)
-            .headers(getHeaders())
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                println("Failed to list files")
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    println("Files in folder $cpcFolder: ${response.body?.string()}")
                 }
             }
         })

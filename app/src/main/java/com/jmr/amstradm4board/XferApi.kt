@@ -13,5 +13,7 @@ interface XferApi {
     suspend fun resetM4(): Response<Unit>
 
     @GET("config.cgi")
-    suspend fun listFiles(@Query("ls") folder: String): Response<List<String>>
+    suspend fun listFiles(
+        @Query("ls") folder: String
+    ): Response<List<String>>
 }
