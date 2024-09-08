@@ -12,8 +12,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 class Xfer(
     private val ip: String
 ) {
+    private val port = "443"
+
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://$ip/")
+        .baseUrl("http://$ip:$port/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
@@ -73,7 +75,6 @@ class Xfer(
         }
     }
 
-    // Las funciones que no usan Retrofit
     fun uploadFile(filePath: String, destination: String) {
         val file = File(filePath)
         if (!file.exists()) {

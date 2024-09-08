@@ -47,7 +47,9 @@ fun XferApp() {
                     Text("Reset CPC")
                 }
                 Button(
-                    onClick = { viewModel.listFiles("/") },
+                    onClick = {
+                        viewModel.listFiles("/")
+                    },
                     modifier = Modifier.padding(bottom = 8.dp) // Añadir separación entre botones
                 ) {
                     Text("List Files")
