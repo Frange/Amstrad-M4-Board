@@ -1,7 +1,6 @@
 package com.jmr.amstradm4board.di
 
-import com.jmr.amstradm4board.XferApi
-import com.jmr.amstradm4board.ui.XferRepository
+import com.jmr.amstradm4board.data.service.AmstradApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,13 +33,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideXferApi(retrofit: Retrofit): XferApi {
-        return retrofit.create(XferApi::class.java)
+    fun provideXferApi(retrofit: Retrofit): AmstradApiService {
+        return retrofit.create(AmstradApiService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideXferRepository(xferApi: XferApi): XferRepository {
-        return XferRepository(xferApi)
-    }
+//    @Provides
+//    @Singleton
+//    fun provideXferRepository(xferApi: XferApi): XferRepository {
+//        return XferRepository(xferApi)
+//    }
 }

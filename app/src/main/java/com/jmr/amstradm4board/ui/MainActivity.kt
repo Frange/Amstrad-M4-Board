@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.asFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -26,8 +27,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun XferApp() {
-    val viewModel: XferViewModel = hiltViewModel()
-    val files by viewModel.files
+    val viewModel: AmstradViewModel = hiltViewModel()
+    val files by viewModel.dataFileList.asFlow().collectAsState(initial = emptyList())
 
     Scaffold(
         topBar = {
@@ -38,25 +39,29 @@ fun XferApp() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp) // Añadir padding a los elementos
+                    .padding(16.dp)
             ) {
                 Button(
-                    onClick = { viewModel.resetCPC() },
-                    modifier = Modifier.padding(bottom = 8.dp) // Añadir separación entre botones
+                    onClick = {
+//                        viewModel.resetCPC()
+                    },
+                    modifier = Modifier.padding(bottom = 8.dp)
                 ) {
                     Text("Reset CPC")
                 }
                 Button(
                     onClick = {
-                        viewModel.listFiles("/")
+//                        viewModel.downloadAndParseFile()
                     },
-                    modifier = Modifier.padding(bottom = 8.dp) // Añadir separación entre botones
+                    modifier = Modifier.padding(bottom = 8.dp)
                 ) {
                     Text("List Files")
                 }
                 LazyColumn {
                     items(files) { file ->
-                        Text("File: $file")
+                        Text(
+                            text = "${file.name} - Size: ${file.fileSize}",
+                        )
                     }
                 }
             }
