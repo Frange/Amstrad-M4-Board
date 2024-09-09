@@ -20,38 +20,44 @@ class AmstradViewModel @Inject constructor(
     private val _dataFileList = MutableLiveData<List<DataFile>>()
     val dataFileList: LiveData<List<DataFile>> get() = _dataFileList
 
+    private var lastPath = "/"
+
     init {
-        updateAndDownloadFile()
-//        downloadAndParseFile("games")
-//        downloadAndParseFile("games/aaa%20JM")
+        navigate("games/aaa%20JM")
     }
 
-    fun updateAndDownloadFile() {
+    fun navigate(path: String) {
         viewModelScope.launch {
             try {
-                // Simula la solicitud del navegador
-                val response = repository.performHttpRequest()
+                val response = repository.navigate(path)
 
                 if (response?.isSuccessful == true) {
-                    val gameFiles = repository.getDataList()
+                    lastPath = path
+                    val gameFiles = repository.getDataList(path)
                     _dataFileList.postValue(gameFiles)
                 }
             } catch (e: Exception) {
-                // Manejar el error
                 Log.v("MY_LOG", "Exception: ${e.message}")
             }
         }
     }
 
-    fun downloadAndParseFile(path: String) {
+    fun runGame(path: String) {
         viewModelScope.launch {
             try {
-                val dataFiles = repository.updateList(path)
-                _dataFileList.postValue(dataFiles)
+                repository.runGame(path)
             } catch (e: Exception) {
-                // Maneja el error
+                Log.v("MY_LOG", "Exception: ${e.message}")
             }
         }
+    }
+
+    private fun cleanPath(input: String): String {
+        return input.substringBeforeLast("/", "")
+    }
+
+    fun goBack() {
+        navigate(cleanPath(lastPath))
     }
 
 }
