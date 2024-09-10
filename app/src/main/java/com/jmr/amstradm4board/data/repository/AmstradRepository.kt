@@ -5,12 +5,12 @@ import okhttp3.Response
 
 interface AmstradRepository {
 
-    suspend fun runGame(path: String): Response?
+    suspend fun navigate(ip: String, path: String): List<DataFile>
 
-    suspend fun navigate(path: String): Response?
+    suspend fun runGame(ip: String, path: String): Response?
 
-    suspend fun updateList(path: String): List<DataFile>
+//    suspend fun updateList(path: String): List<DataFile>
 
-    suspend fun getDataList(path: String): List<DataFile>
+//    suspend fun getDataList(path: String): List<DataFile>
 
 }

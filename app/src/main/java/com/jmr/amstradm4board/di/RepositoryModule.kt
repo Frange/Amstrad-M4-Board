@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module
@@ -16,8 +17,8 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideAmstradRepository(
-//        gson: Gson,
-        service: AmstradApiService
-    ): AmstradRepository = AmstradRepositoryImpl(service)
+        service: AmstradApiService,
+        client: OkHttpClient
+    ): AmstradRepository = AmstradRepositoryImpl(service, client)
 
 }

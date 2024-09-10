@@ -37,9 +37,4 @@ object NetworkModule {
         return retrofit.create(AmstradApiService::class.java)
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideXferRepository(xferApi: XferApi): XferRepository {
-//        return XferRepository(xferApi)
-//    }
 }

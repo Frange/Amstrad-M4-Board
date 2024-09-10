@@ -15,65 +15,35 @@ import javax.inject.Inject
 
 
 class AmstradRepositoryImpl @Inject constructor(
-    private val apiService: AmstradApiService
+    private val apiService: AmstradApiService,
+    private val client: OkHttpClient
 ) : AmstradRepository {
 
-    override suspend fun runGame(path: String): Response? {
-//      http://192.168.1.39/config.cgi?run2=%2F%2Fgames%2Faaa%20JM%2FAbadia%20(1987).dsk%2FABADIA64.BAS
-        val client = OkHttpClient()
-
-        val url = "http://192.168.1.39/config.cgi?run2=//${encodeForUrl(path)}"
-        val request = Request.Builder()
-            .url(url)
-            .build()
-
-        return withContext(Dispatchers.IO) {
-            try {
-                client.newCall(request).execute()
-            } catch (e: IOException) {
-                null
-            }
-        }
-    }
-
-    override suspend fun navigate(path: String): Response? {
-        val client = OkHttpClient()
-
-        val web = "http://192.168.1.39/config.cgi?ls=%2F%2Fgames%2Faaa%20JM"
-        val url = "http://192.168.1.39/config.cgi?ls=//${encodeForUrl(path)}"
+    override suspend fun navigate(ip: String, path: String): List<DataFile> {
+        val url = "http://$ip/config.cgi?ls=//${encodeForUrl(path)}"
 
         val request = Request.Builder()
             .url(url)
             .build()
 
         return withContext(Dispatchers.IO) {
-            try {
-                client.newCall(request).execute()
-            } catch (e: IOException) {
-                null
-            }
+            client.newCall(request).execute()
+            getDataList(path)
         }
     }
 
-    override suspend fun updateList(path: String): List<DataFile> {
-        return try {
-            val response = navigate(path)
-//            val response = apiService.updateList("//$path")
-            if (response?.isSuccessful == true) {
-                getDataList(path)
-            } else {
-                arrayListOf(
-                    DataFile(path, "No data", false, "0")
-                )
-            }
-        } catch (e: Exception) {
-            arrayListOf(
-                DataFile("Exception: ${e.message}", "", false, "0")
-            )
+    override suspend fun runGame(ip: String, path: String): Response? {
+        val url = "http://$ip/config.cgi?run2=//${encodeForUrl(path)}"
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        return withContext(Dispatchers.IO) {
+            client.newCall(request).execute()
         }
     }
 
-    override suspend fun getDataList(path: String): List<DataFile> {
+    suspend fun getDataList(path: String): List<DataFile> {
         val response = apiService.downloadFolderFile()
 
         if (response.isSuccessful) {
@@ -96,11 +66,22 @@ class AmstradRepositoryImpl @Inject constructor(
             if (parts.size == 3) {
                 val name = parts[0].trim()
                 val size = parts[2].trim()
-                val isGame = index != 0
+                val isGame = isGame(path)
                 gameList.add(DataFile(path, name, isGame, size))
             }
         }
         return gameList
+    }
+
+    fun isGame(item: String): Boolean {
+        return when {
+            !item.contains(".") -> false // Si no tiene un ".", es una carpeta
+            item.endsWith(
+                ".dsk",
+                ignoreCase = true
+            ) -> false // Si termina en ".dsk", se trata como carpeta
+            else -> true
+        }
     }
 
     private fun encodeForUrl(input: String): String {

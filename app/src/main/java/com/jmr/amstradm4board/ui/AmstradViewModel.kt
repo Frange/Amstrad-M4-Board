@@ -22,42 +22,46 @@ class AmstradViewModel @Inject constructor(
 
     private var lastPath = "/"
 
-    init {
-        navigate("games/aaa%20JM")
-    }
-
-    fun navigate(path: String) {
+    fun navigate(ip: String, path: String) {
         viewModelScope.launch {
             try {
-                val response = repository.navigate(path)
+                val gameFiles = repository.navigate(ip, path)
 
-                if (response?.isSuccessful == true) {
-                    lastPath = path
-                    val gameFiles = repository.getDataList(path)
-                    _dataFileList.postValue(gameFiles)
-                }
+                lastPath = path
+                _dataFileList.postValue(gameFiles)
             } catch (e: Exception) {
                 Log.v("MY_LOG", "Exception: ${e.message}")
             }
         }
     }
 
-    fun runGame(path: String) {
+    fun runGame(ip: String, path: String) {
         viewModelScope.launch {
             try {
-                repository.runGame(path)
+                repository.runGame(ip, path)
             } catch (e: Exception) {
                 Log.v("MY_LOG", "Exception: ${e.message}")
             }
         }
+    }
+
+    fun goBack(ip: String) {
+        navigate(ip, cleanPath(lastPath))
     }
 
     private fun cleanPath(input: String): String {
         return input.substringBeforeLast("/", "")
     }
 
-    fun goBack() {
-        navigate(cleanPath(lastPath))
+    fun resetM4() {
+
     }
 
+    fun resetCPC() {
+
+    }
+
+    fun refreshFileList(ip: String) {
+        navigate(ip, lastPath)
+    }
 }
