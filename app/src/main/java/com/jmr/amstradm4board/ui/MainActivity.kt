@@ -24,9 +24,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,15 +31,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.asFlow
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
-import com.jmr.amstradm4board.R
 import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.domain.model.DataFileType
 import dagger.hilt.android.AndroidEntryPoint
 
-import android.content.Context
-import android.content.res.Resources
-import android.util.Log
-import kotlin.math.max
+import com.jmr.amstradm4board.ui.Utils.customFontFamily
+import com.jmr.amstradm4board.ui.Utils.getDskBackground
 
 // Paleta de colores basada en el Amstrad CPC
 val redKeyboard = Color(0xFFDD2222)
@@ -59,38 +53,63 @@ val isGameBackground = blueKeyboard
 val isDskBackground = blueKeyboard
 val otherFilesBackground = blackKeyboard
 
+// Config screen
+const val path = "games/aaa%20JM"
+
+//TOP
+const val titleText = "Amstrad M4 Board"
+const val resetCPCText = "RESET CPC"
+const val resetM4Text = "RESET M4"
+const val ipLabelText = "IP Address:"
+const val defaultIp = "192.168.1.39"
+
+val ipTextFieldHeight = 56.dp
+val ipFontSize = 12.sp
+
+val resetButtonFontSize = 12.sp
+val resetButtonWidth = 76.dp
+val resetButtonHeight = 56.dp
+
+const val dskItemAlpha = 0.8f
+val dskItemPadding = 6.dp
+val dskItemFontSize = 14.sp
+val dskItemKSizeFontSize = 12.sp
+
+var isFirstTime = true
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            XferApp()
+            RenderMainScreen()
         }
     }
 }
 
 @Composable
-fun XferApp() {
+fun RenderMainScreen() {
     val viewModel: AmstradViewModel = hiltViewModel()
 
-    var ip by remember { mutableStateOf("192.168.1.39") }
-    val path = "games/aaa%20JM"
+    var ip by remember { mutableStateOf(defaultIp) }
     val files by viewModel.dataFileList.asFlow().collectAsState(initial = emptyList())
     var isRefreshing by remember { mutableStateOf(false) }
-    val textFieldHeight = 56.dp
 
     var showDskDialog by remember { mutableStateOf(false) }
     var selectedDskName by remember { mutableStateOf("") }
     var dskFiles by remember { mutableStateOf<List<DataFile>>(emptyList()) }
 
-    viewModel.navigate(ip, path)
+    if (isFirstTime) {
+        isFirstTime = false
+        viewModel.navigate(ip, path)
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Amstrad M4 Board",
+                        text = titleText,
                         fontFamily = customFontFamily,
                         color = brightYellowScreen,
                         textAlign = TextAlign.Center,
@@ -121,7 +140,7 @@ fun XferApp() {
                         value = ip,
                         label = {
                             Text(
-                                text = "IP Address:",
+                                text = ipLabelText,
                                 color = pastelYellowScreen,
                                 fontFamily = customFontFamily
                             )
@@ -130,7 +149,7 @@ fun XferApp() {
                         modifier = Modifier
                             .weight(1f)
                             .background(blackKeyboard, RoundedCornerShape(8.dp))
-                            .heightIn(min = textFieldHeight),
+                            .heightIn(min = ipTextFieldHeight),
                         colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = blackKeyboard,
                             textColor = brightYellowScreen,
@@ -142,7 +161,7 @@ fun XferApp() {
                         textStyle = TextStyle(
                             fontFamily = customFontFamily,
                             color = brightYellowScreen,
-                            fontSize = 12.sp
+                            fontSize = ipFontSize
                         ),
                         shape = RoundedCornerShape(12.dp)
                     )
@@ -155,15 +174,15 @@ fun XferApp() {
                         },
                         colors = ButtonDefaults.buttonColors(backgroundColor = redKeyboard),
                         modifier = Modifier
-                            .width(76.dp)
-                            .height(56.dp)
+                            .width(resetButtonWidth)
+                            .height(resetButtonHeight)
                             .clip(RoundedCornerShape(8.dp))
                     ) {
                         Text(
-                            text = "RESET CPC",
+                            text = resetCPCText,
                             color = lightWhiteKeyboard,
                             textAlign = TextAlign.Center,
-                            fontSize = 12.sp
+                            fontSize = resetButtonFontSize
                         )
                     }
 
@@ -175,19 +194,18 @@ fun XferApp() {
                         },
                         colors = ButtonDefaults.buttonColors(backgroundColor = redKeyboard),
                         modifier = Modifier
-                            .width(76.dp)
-                            .height(56.dp)
+                            .width(resetButtonWidth)
+                            .height(resetButtonHeight)
                             .clip(RoundedCornerShape(8.dp))
                     ) {
                         Text(
-                            text = "RESET M4",
+                            text = resetM4Text,
                             color = lightWhiteKeyboard,
                             textAlign = TextAlign.Center,
-                            fontSize = 12.sp
+                            fontSize = resetButtonFontSize
                         )
                     }
                 }
-
 
                 Spacer(modifier = Modifier.height(2.dp))
 
@@ -206,7 +224,7 @@ fun XferApp() {
                     ) {
                         LazyColumn {
                             items(files) { file ->
-                                FileItem(file) { clickedFile ->
+                                RenderDataFileItem(file) { clickedFile ->
                                     val fullPath = clickedFile.path + "/" + clickedFile.name
 
                                     when (clickedFile.type) {
@@ -274,7 +292,7 @@ fun XferApp() {
     )
 
     if (showDskDialog) {
-        DskDialog(
+        RenderDskDialog(
             dskName = selectedDskName,
             files = dskFiles,
             onDismiss = { showDskDialog = false },
@@ -287,7 +305,7 @@ fun XferApp() {
 }
 
 @Composable
-fun FileItem(file: DataFile, onClick: (DataFile) -> Unit) {
+fun RenderDataFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
     val backgroundColor = when (file.type) {
         DataFileType.DSK -> isDskBackground
         DataFileType.GAME -> isGameBackground
@@ -337,13 +355,13 @@ fun FileItem(file: DataFile, onClick: (DataFile) -> Unit) {
 }
 
 @Composable
-fun DskDialog(
+fun RenderDskDialog(
     dskName: String,
     files: List<DataFile>,
     onDismiss: () -> Unit,
     onFileClick: (DataFile) -> Unit
 ) {
-    val backgroundResId = getDskBackground(dskName.lowercase())
+    val backgroundResId = getDskBackground(LocalContext.current, dskName.lowercase())
 
     Box(
         modifier = Modifier
@@ -423,7 +441,7 @@ fun DskDialog(
                             modifier = Modifier.align(Alignment.Center)
                         ) {
                             items(files) { file ->
-                                DskFileItem(file, onClick = { onFileClick(file) })
+                                RenderDskItem(file, onClick = { onFileClick(file) })
                             }
                         }
                     }
@@ -435,12 +453,12 @@ fun DskDialog(
 }
 
 @Composable
-fun DskFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
+fun RenderDskItem(file: DataFile, onClick: (DataFile) -> Unit) {
     Card(
         backgroundColor = blueKeyboard,
         modifier = Modifier
             .fillMaxWidth()
-            .alpha(0.8f)
+            .alpha(dskItemAlpha)
             .padding(vertical = 4.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable { onClick(file) },
@@ -449,13 +467,13 @@ fun DskFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(dskItemPadding),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = file.name.uppercase(),
-                fontSize = 14.sp,
+                fontSize = dskItemFontSize,
                 fontFamily = customFontFamily,
                 style = MaterialTheme.typography.body1,
                 color = brightYellowScreen,
@@ -466,96 +484,10 @@ fun DskFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
                 Text(
                     text = file.fileSize,
                     fontFamily = customFontFamily,
-                    style = MaterialTheme.typography.body2.copy(fontSize = 12.sp),
+                    style = MaterialTheme.typography.body2.copy(fontSize = dskItemKSizeFontSize),
                     color = lightWhiteKeyboard
                 )
             }
         }
     }
 }
-
-//@Composable
-//fun getDskBackground(dskName: String): Int {
-//    val context = LocalContext.current
-//
-//    val resourceName = dskName
-//        .lowercase()
-//        .replace(" ", "_")
-//        .replace("-", "_")
-//        .replace(".dsk", "") // Eliminar la extensión del archivo
-//
-//    val resId = context.resources.getIdentifier(
-//        resourceName,
-//        "drawable",
-//        context.packageName
-//    )
-//
-//    return if (resId != 0) resId else R.drawable.amstrad
-//}
-
-fun similarityScore(str1: String, str2: String): Int {
-    val words1 = str1.split("_")
-    val words2 = str2.split("_")
-
-    return words1.intersect(words2.toSet()).size
-}
-
-fun getDrawableResourceNames(context: Context): List<String> {
-    val drawables = mutableListOf<String>()
-
-    try {
-        val drawableClass = R.drawable::class.java
-        val fields = drawableClass.fields
-
-        for (field in fields) {
-            try {
-                val resourceName = field.name
-                drawables.add(resourceName)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-
-    return drawables
-}
-
-@Composable
-fun getDskBackground(dskName: String): Int {
-    val context = LocalContext.current
-    val cleanedName = dskName
-        .lowercase()
-        .replace(".dsk", "")
-        .replace("-", "_")
-        .replace(" ", "_")
-
-    val drawableNames = getDrawableResourceNames(context)
-
-    val exactMatchId = context.resources.getIdentifier(cleanedName, "drawable", context.packageName)
-    if (exactMatchId != 0) {
-        return exactMatchId
-    }
-
-    var bestMatchId = 0
-    var bestScore = 0
-
-    for (drawableName in drawableNames) {
-        val score = similarityScore(cleanedName, drawableName)
-        if (score > bestScore) {
-            bestScore = score
-            bestMatchId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
-        }
-    }
-
-    if (bestMatchId != 0) {
-        return bestMatchId
-    }
-
-    return R.drawable.amstrad
-}
-
-val customFontFamily = FontFamily(
-    Font(R.font.amstrad_cpc464, FontWeight.Normal)
-)

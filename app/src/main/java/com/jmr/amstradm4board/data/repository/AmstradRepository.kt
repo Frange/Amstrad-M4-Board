@@ -9,8 +9,4 @@ interface AmstradRepository {
 
     suspend fun runGame(ip: String, path: String): Response?
 
-//    suspend fun updateList(path: String): List<DataFile>
-
-//    suspend fun getDataList(path: String): List<DataFile>
-
 }
