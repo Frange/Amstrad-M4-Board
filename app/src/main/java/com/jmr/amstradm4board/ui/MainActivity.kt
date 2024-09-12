@@ -5,11 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +32,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.jmr.amstradm4board.R
 import com.jmr.amstradm4board.domain.model.DataFile
+import com.jmr.amstradm4board.domain.model.DataFileType
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -66,6 +70,10 @@ fun XferApp() {
     val files by viewModel.dataFileList.asFlow().collectAsState(initial = emptyList())
     var isRefreshing by remember { mutableStateOf(false) }
     val textFieldHeight = 56.dp
+
+    var showDskDialog by remember { mutableStateOf(false) }
+    var selectedDskName by remember { mutableStateOf("") }
+    var dskFiles by remember { mutableStateOf<List<DataFile>>(emptyList()) }
 
     viewModel.navigate(ip, path)
 
@@ -191,19 +199,34 @@ fun XferApp() {
                         LazyColumn {
                             items(files) { file ->
                                 FileItem(file) { clickedFile ->
-                                    val fileName = clickedFile.name.lowercase()
-                                    if (fileName.lowercase()
-                                            .contains(".dsk") || !clickedFile.isGame
-                                    ) {
-                                        viewModel.navigate(
-                                            ip,
-                                            clickedFile.path + "/" + clickedFile.name
-                                        )
-                                    } else {
-                                        viewModel.runGame(
-                                            ip,
-                                            clickedFile.path + "/" + clickedFile.name
-                                        )
+                                    val fullPath = clickedFile.path + "/" + clickedFile.name
+
+                                    when (clickedFile.type) {
+                                        DataFileType.DSK -> {
+                                            viewModel.openDSK(ip, fullPath) { dskContentFiles ->
+                                                selectedDskName = clickedFile.name
+                                                dskFiles = dskContentFiles
+                                                showDskDialog = true
+                                            }
+                                        }
+
+                                        DataFileType.GAME -> {
+                                            viewModel.runGame(
+                                                ip,
+                                                fullPath
+                                            )
+                                        }
+
+                                        DataFileType.FOLDER -> {
+                                            viewModel.navigate(
+                                                ip,
+                                                fullPath
+                                            )
+                                        }
+
+                                        DataFileType.OTHER -> {
+
+                                        }
                                     }
                                 }
                             }
@@ -241,20 +264,27 @@ fun XferApp() {
             }
         }
     )
+
+    if (showDskDialog) {
+        DskDialog(
+            dskName = selectedDskName,
+            files = dskFiles,
+            onDismiss = { showDskDialog = false },
+            onFileClick = { file ->
+                viewModel.runGame(ip, file.path + "/" + file.name)
+                showDskDialog = false
+            }
+        )
+    }
 }
 
 @Composable
 fun FileItem(file: DataFile, onClick: (DataFile) -> Unit) {
-    val backgroundColor = when {
-        file.isGame -> isGameBackground
-        file.name.lowercase().endsWith(".dsk") -> isDskBackground
-        else -> otherFilesBackground
-    }
-
-    val isFolder = when {
-        file.isGame -> false
-        file.name.lowercase().endsWith(".dsk") -> false
-        else -> true
+    val backgroundColor = when(file.type) {
+        DataFileType.DSK -> isDskBackground
+        DataFileType.GAME -> isGameBackground
+        DataFileType.FOLDER -> otherFilesBackground
+        DataFileType.OTHER -> otherFilesBackground
     }
 
     Card(
@@ -274,7 +304,7 @@ fun FileItem(file: DataFile, onClick: (DataFile) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (!isFolder) file.name else file.name.uppercase(),
+                text = if (file.type != DataFileType.FOLDER) file.name else file.name.uppercase(),
                 fontSize = 14.sp,
                 fontFamily = customFontFamily,
                 style = MaterialTheme.typography.body1,
@@ -289,6 +319,73 @@ fun FileItem(file: DataFile, onClick: (DataFile) -> Unit) {
                     style = MaterialTheme.typography.body2.copy(fontSize = 12.sp),
                     color = lightWhiteKeyboard
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun DskDialog(
+    dskName: String,
+    files: List<DataFile>,
+    onDismiss: () -> Unit,
+    onFileClick: (DataFile) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Gray.copy(alpha = 0.6f))
+            .clickable(
+                onClick = { onDismiss() },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() })
+    ) {
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.6f)
+                .align(Alignment.Center)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }) { /* Do nothing, prevent dismissal on clicking inside */ },
+            backgroundColor = darkGrayKeyboard,
+            elevation = 16.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxSize()
+            ) {
+                // Dialog title with close button
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = dskName,
+                        fontFamily = customFontFamily,
+                        fontSize = 18.sp,
+                        color = brightYellowScreen
+                    )
+                    IconButton(onClick = onDismiss) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = Color.White
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // List of files inside the .dsk
+                LazyColumn {
+                    items(files) { file ->
+                        FileItem(file, onClick = { onFileClick(file) })
+                    }
+                }
             }
         }
     }

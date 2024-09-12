@@ -3,6 +3,7 @@ package com.jmr.amstradm4board.data.repository
 import android.util.Log
 import com.jmr.amstradm4board.data.service.AmstradApiService
 import com.jmr.amstradm4board.domain.model.DataFile
+import com.jmr.amstradm4board.domain.model.DataFileType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -32,7 +33,7 @@ class AmstradRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun runGame(ip: String, path: String): Response? {
+    override suspend fun runGame(ip: String, path: String): Response {
         val url = "http://$ip/config.cgi?run2=//${encodeForUrl(path)}"
         val request = Request.Builder()
             .url(url)
@@ -61,19 +62,36 @@ class AmstradRepositoryImpl @Inject constructor(
         val gameList = mutableListOf<DataFile>()
         val lines = content.lines()
 
-        lines.forEachIndexed { index, line ->
+        lines.forEachIndexed { _, line ->
             val parts = line.split(",")
             if (parts.size == 3) {
                 val name = parts[0].trim()
                 val size = parts[2].trim()
-                val isGame = isGame(path)
-                gameList.add(DataFile(path, name, isGame, size))
+                val type = getTypeOfFile(name)
+                gameList.add(DataFile(path, name, type, size))
             }
         }
         return gameList
     }
 
-    fun isGame(item: String): Boolean {
+    private fun getTypeOfFile(name: String): DataFileType {
+        return when {
+            isFolder(name) -> DataFileType.FOLDER
+            isGame(name) -> DataFileType.GAME
+            isDskFile(name) -> DataFileType.DSK
+            else -> DataFileType.OTHER
+        }
+    }
+
+    private fun isDskFile(name: String): Boolean {
+        return name.lowercase().endsWith(".dsk")
+    }
+
+    private fun isFolder(name: String): Boolean {
+        return !name.contains(".")
+    }
+
+    private fun isGame(item: String): Boolean {
         return when {
             !item.contains(".") -> false // Si no tiene un ".", es una carpeta
             item.endsWith(

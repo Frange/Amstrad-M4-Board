@@ -35,6 +35,17 @@ class AmstradViewModel @Inject constructor(
         }
     }
 
+    fun openDSK(ip: String, path: String, onFilesLoaded: (List<DataFile>) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val dskFiles = repository.navigate(ip, path)  // Método en el repositorio para obtener el contenido del .dsk
+                onFilesLoaded(dskFiles)
+            } catch (e: Exception) {
+                Log.v("MY_LOG", "Exception: ${e.message}")
+            }
+        }
+    }
+
     fun runGame(ip: String, path: String) {
         viewModelScope.launch {
             try {
