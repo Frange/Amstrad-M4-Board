@@ -3,6 +3,7 @@ package com.jmr.amstradm4board.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -16,9 +17,12 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -35,6 +39,10 @@ import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.domain.model.DataFileType
 import dagger.hilt.android.AndroidEntryPoint
 
+import android.content.Context
+import android.content.res.Resources
+import android.util.Log
+import kotlin.math.max
 
 // Paleta de colores basada en el Amstrad CPC
 val redKeyboard = Color(0xFFDD2222)
@@ -280,7 +288,7 @@ fun XferApp() {
 
 @Composable
 fun FileItem(file: DataFile, onClick: (DataFile) -> Unit) {
-    val backgroundColor = when(file.type) {
+    val backgroundColor = when (file.type) {
         DataFileType.DSK -> isDskBackground
         DataFileType.GAME -> isGameBackground
         DataFileType.FOLDER -> otherFilesBackground
@@ -304,8 +312,12 @@ fun FileItem(file: DataFile, onClick: (DataFile) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (file.type != DataFileType.FOLDER) file.name else file.name.uppercase(),
-                fontSize = 14.sp,
+                text = if (file.type != DataFileType.FOLDER) file.name
+                    .replace(".dsk", "")
+                    .replace(".DSK", "")
+                    .take(20)
+                else file.name.uppercase().take(18),
+                fontSize = 13.sp,
                 fontFamily = customFontFamily,
                 style = MaterialTheme.typography.body1,
                 color = brightYellowScreen,
@@ -331,6 +343,8 @@ fun DskDialog(
     onDismiss: () -> Unit,
     onFileClick: (DataFile) -> Unit
 ) {
+    val backgroundResId = getDskBackground(dskName.lowercase())
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -348,47 +362,198 @@ fun DskDialog(
                 .align(Alignment.Center)
                 .clickable(
                     indication = null,
-                    interactionSource = remember { MutableInteractionSource() }) { /* Do nothing, prevent dismissal on clicking inside */ },
+                    interactionSource = remember { MutableInteractionSource() }) {/* Do nothing, prevent dismissal on clicking inside */ },
             backgroundColor = darkGrayKeyboard,
             elevation = 16.dp
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .padding(16.dp)
                     .fillMaxSize()
             ) {
-                // Dialog title with close button
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Image(
+                    alpha = 0.2f,
+                    painter = painterResource(
+                        id = backgroundResId,
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(PaddingValues(0.dp, 70.dp, 0.dp, 30.dp))
+                )
+
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize()
                 ) {
-                    Text(
-                        text = dskName,
-                        fontFamily = customFontFamily,
-                        fontSize = 18.sp,
-                        color = brightYellowScreen
-                    )
-                    IconButton(onClick = onDismiss) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            tint = Color.White
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(blackKeyboard, RoundedCornerShape(8.dp)),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(8.dp, 0.dp),
+                            maxLines = 1,
+                            text = dskName
+                                .replace(".dsk", "")
+                                .replace(".DSK", "")
+                                .take(16),
+                            fontFamily = customFontFamily,
+                            fontSize = 16.sp,
+                            color = brightYellowScreen
                         )
+                        IconButton(onClick = onDismiss) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close",
+                                tint = Color.White
+                            )
+                        }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                // List of files inside the .dsk
-                LazyColumn {
-                    items(files) { file ->
-                        FileItem(file, onClick = { onFileClick(file) })
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        LazyColumn(
+                            modifier = Modifier.align(Alignment.Center)
+                        ) {
+                            items(files) { file ->
+                                DskFileItem(file, onClick = { onFileClick(file) })
+                            }
+                        }
                     }
+
                 }
             }
         }
     }
+}
+
+@Composable
+fun DskFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
+    Card(
+        backgroundColor = blueKeyboard,
+        modifier = Modifier
+            .fillMaxWidth()
+            .alpha(0.8f)
+            .padding(vertical = 4.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick(file) },
+        elevation = 8.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = file.name.uppercase(),
+                fontSize = 14.sp,
+                fontFamily = customFontFamily,
+                style = MaterialTheme.typography.body1,
+                color = brightYellowScreen,
+                modifier = Modifier.weight(1f)
+            )
+
+            if (file.fileSize != "0") {
+                Text(
+                    text = file.fileSize,
+                    fontFamily = customFontFamily,
+                    style = MaterialTheme.typography.body2.copy(fontSize = 12.sp),
+                    color = lightWhiteKeyboard
+                )
+            }
+        }
+    }
+}
+
+//@Composable
+//fun getDskBackground(dskName: String): Int {
+//    val context = LocalContext.current
+//
+//    val resourceName = dskName
+//        .lowercase()
+//        .replace(" ", "_")
+//        .replace("-", "_")
+//        .replace(".dsk", "") // Eliminar la extensión del archivo
+//
+//    val resId = context.resources.getIdentifier(
+//        resourceName,
+//        "drawable",
+//        context.packageName
+//    )
+//
+//    return if (resId != 0) resId else R.drawable.amstrad
+//}
+
+fun similarityScore(str1: String, str2: String): Int {
+    val words1 = str1.split("_")
+    val words2 = str2.split("_")
+
+    return words1.intersect(words2.toSet()).size
+}
+
+fun getDrawableResourceNames(context: Context): List<String> {
+    val drawables = mutableListOf<String>()
+
+    try {
+        val drawableClass = R.drawable::class.java
+        val fields = drawableClass.fields
+
+        for (field in fields) {
+            try {
+                val resourceName = field.name
+                drawables.add(resourceName)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    return drawables
+}
+
+@Composable
+fun getDskBackground(dskName: String): Int {
+    val context = LocalContext.current
+    val cleanedName = dskName
+        .lowercase()
+        .replace(".dsk", "")
+        .replace("-", "_")
+        .replace(" ", "_")
+
+    val drawableNames = getDrawableResourceNames(context)
+
+    val exactMatchId = context.resources.getIdentifier(cleanedName, "drawable", context.packageName)
+    if (exactMatchId != 0) {
+        return exactMatchId
+    }
+
+    var bestMatchId = 0
+    var bestScore = 0
+
+    for (drawableName in drawableNames) {
+        val score = similarityScore(cleanedName, drawableName)
+        if (score > bestScore) {
+            bestScore = score
+            bestMatchId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+        }
+    }
+
+    if (bestMatchId != 0) {
+        return bestMatchId
+    }
+
+    return R.drawable.amstrad
 }
 
 val customFontFamily = FontFamily(
