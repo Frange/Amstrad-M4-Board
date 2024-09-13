@@ -39,6 +39,8 @@ import com.jmr.amstradm4board.ui.Utils.customFontFamily
 import com.jmr.amstradm4board.ui.Utils.getDskBackground
 
 // Paleta de colores basada en el Amstrad CPC
+val black = Color(0xFF000000)
+
 val redKeyboard = Color(0xFFDD2222)
 val darkGrayKeyboard = Color(0xFF282828)
 val blackKeyboard = Color(0xFF222222)
@@ -62,6 +64,7 @@ const val resetCPCText = "RESET CPC"
 const val resetM4Text = "RESET M4"
 const val ipLabelText = "IP Address:"
 const val defaultIp = "192.168.1.39"
+const val delButtonText = "DEL"
 
 val ipTextFieldHeight = 56.dp
 val ipFontSize = 12.sp
@@ -70,12 +73,26 @@ val resetButtonFontSize = 12.sp
 val resetButtonWidth = 76.dp
 val resetButtonHeight = 56.dp
 
+val dskDialogBackground = blackKeyboard
+val dskDialogCardBackground = black
+const val dskDialogMaxWidth = 0.95f
+const val dskDialogMaxHeight = 0.7f
+const val dskDialogAlpha = 0.9f
+const val dskDialogImageAlpha = 0.3f
+val dskDialogImagePadding = PaddingValues(0.dp, 70.dp, 0.dp, 30.dp)
+val dskDialogTitleBackground = blueKeyboard
+val dskDialogTitleFontSize = 16.sp
+val dskDialogTitleFontColor = brightYellowScreen
+const val dskDialogTitleLength = 16
+
+val dskItemBackground = blueKeyboard
 const val dskItemAlpha = 0.8f
 val dskItemPadding = 6.dp
 val dskItemFontSize = 14.sp
 val dskItemKSizeFontSize = 12.sp
 
 var isFirstTime = true
+var drawableList: List<String>? = null
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -101,6 +118,7 @@ fun RenderMainScreen() {
 
     if (isFirstTime) {
         isFirstTime = false
+        drawableList = Utils.getDrawableResourceNames()
         viewModel.navigate(ip, path)
     }
 
@@ -276,7 +294,7 @@ fun RenderMainScreen() {
                         .clip(RoundedCornerShape(12.dp))
                 ) {
                     Text(
-                        text = "DEL",
+                        text = delButtonText,
                         color = lightWhiteKeyboard,
                         fontSize = 20.sp,
                         modifier = Modifier
@@ -361,12 +379,14 @@ fun RenderDskDialog(
     onDismiss: () -> Unit,
     onFileClick: (DataFile) -> Unit
 ) {
-    val backgroundResId = getDskBackground(LocalContext.current, dskName.lowercase())
+    val backgroundResId = getDskBackground(LocalContext.current, drawableList, dskName.lowercase())
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Gray.copy(alpha = 0.6f))
+            .background(
+                dskDialogBackground.copy(alpha = dskDialogAlpha)
+            )
             .clickable(
                 onClick = { onDismiss() },
                 indication = null,
@@ -375,13 +395,15 @@ fun RenderDskDialog(
         Card(
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.6f)
+                .fillMaxWidth(dskDialogMaxWidth)
+                .fillMaxHeight(dskDialogMaxHeight)
                 .align(Alignment.Center)
                 .clickable(
                     indication = null,
-                    interactionSource = remember { MutableInteractionSource() }) {/* Do nothing, prevent dismissal on clicking inside */ },
-            backgroundColor = darkGrayKeyboard,
+                    interactionSource = remember { MutableInteractionSource() }) {
+                    /* Do nothing, prevent dismissal on clicking inside */
+                },
+            backgroundColor = dskDialogCardBackground,
             elevation = 16.dp
         ) {
             Box(
@@ -389,14 +411,14 @@ fun RenderDskDialog(
                     .fillMaxSize()
             ) {
                 Image(
-                    alpha = 0.2f,
+                    alpha = dskDialogImageAlpha,
                     painter = painterResource(
                         id = backgroundResId,
                     ),
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(PaddingValues(0.dp, 70.dp, 0.dp, 30.dp))
+                        .padding(dskDialogImagePadding)
                 )
 
                 Column(
@@ -407,7 +429,7 @@ fun RenderDskDialog(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(blackKeyboard, RoundedCornerShape(8.dp)),
+                            .background(dskDialogTitleBackground, RoundedCornerShape(8.dp)),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -417,10 +439,10 @@ fun RenderDskDialog(
                             text = dskName
                                 .replace(".dsk", "")
                                 .replace(".DSK", "")
-                                .take(16),
+                                .take(dskDialogTitleLength),
                             fontFamily = customFontFamily,
-                            fontSize = 16.sp,
-                            color = brightYellowScreen
+                            fontSize = dskDialogTitleFontSize,
+                            color = dskDialogTitleFontColor
                         )
                         IconButton(onClick = onDismiss) {
                             Icon(
@@ -445,7 +467,6 @@ fun RenderDskDialog(
                             }
                         }
                     }
-
                 }
             }
         }
@@ -455,7 +476,7 @@ fun RenderDskDialog(
 @Composable
 fun RenderDskItem(file: DataFile, onClick: (DataFile) -> Unit) {
     Card(
-        backgroundColor = blueKeyboard,
+        backgroundColor = dskItemBackground,
         modifier = Modifier
             .fillMaxWidth()
             .alpha(dskItemAlpha)

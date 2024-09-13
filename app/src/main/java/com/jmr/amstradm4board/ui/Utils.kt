@@ -12,14 +12,7 @@ object Utils {
         Font(R.font.amstrad_cpc464, FontWeight.Normal)
     )
 
-    fun similarityScore(str1: String, str2: String): Int {
-        val words1 = str1.split("_")
-        val words2 = str2.split("_")
-
-        return words1.intersect(words2.toSet()).size
-    }
-
-    fun getDskBackground(context: Context, dskName: String): Int {
+    fun getDskBackground(context: Context, drawableList: List<String>?, dskName: String): Int {
         val cleanedName = dskName
             .lowercase()
             .replace(".dsk", "")
@@ -27,9 +20,12 @@ object Utils {
             .replace(" ", "_")
             .trim()
 
-        val drawableNames = getDrawableResourceNames(context)
+        val exactMatchId =
+            context.resources.getIdentifier(cleanedName, "drawable", context.packageName)
+        if (drawableList.isNullOrEmpty()) {
+            return R.drawable.amstrad
+        }
 
-        val exactMatchId = context.resources.getIdentifier(cleanedName, "drawable", context.packageName)
         if (exactMatchId != 0) {
             return exactMatchId
         }
@@ -37,11 +33,12 @@ object Utils {
         var bestMatchId = 0
         var bestScore = 0
 
-        for (drawableName in drawableNames) {
+        for (drawableName in drawableList) {
             val score = similarityScore(cleanedName, drawableName)
             if (score > bestScore) {
                 bestScore = score
-                bestMatchId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+                bestMatchId =
+                    context.resources.getIdentifier(drawableName, "drawable", context.packageName)
             }
         }
 
@@ -52,7 +49,7 @@ object Utils {
         return R.drawable.amstrad
     }
 
-    private fun getDrawableResourceNames(context: Context): List<String> {
+    fun getDrawableResourceNames(): List<String> {
         val drawables = mutableListOf<String>()
 
         try {
@@ -74,4 +71,10 @@ object Utils {
         return drawables
     }
 
+    private fun similarityScore(str1: String, str2: String): Int {
+        val words1 = str1.split("_")
+        val words2 = str2.split("_")
+
+        return words1.intersect(words2.toSet()).size
+    }
 }
