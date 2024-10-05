@@ -47,98 +47,102 @@ import com.jmr.amstradm4board.ui.drawableList
 
 @Composable
 fun RenderDskDialog(
+    showDskDialog: Boolean,
     dskName: String,
     files: List<DataFile>,
     onDismiss: () -> Unit,
     onFileClick: (DataFile) -> Unit
 ) {
-    val backgroundResId = getDskBackground(LocalContext.current, drawableList, dskName.lowercase())
+    if (showDskDialog) {
+        val backgroundResId =
+            getDskBackground(LocalContext.current, drawableList, dskName.lowercase())
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                dskDialogBackground.copy(alpha = dskDialogAlpha)
-            )
-            .clickable(
-                onClick = { onDismiss() },
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() })
-    ) {
-        Card(
-            shape = RoundedCornerShape(12.dp),
+        Box(
             modifier = Modifier
-                .fillMaxWidth(dskDialogMaxWidth)
-                .fillMaxHeight(dskDialogMaxHeight)
-                .align(Alignment.Center)
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }) {
-                    /* Do nothing, prevent dismissal on clicking inside */
-                },
-            backgroundColor = dskDialogCardBackground,
-            elevation = 16.dp
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Image(
-                    alpha = dskDialogImageAlpha,
-                    painter = painterResource(
-                        id = backgroundResId,
-                    ),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dskDialogImagePadding)
+                .fillMaxSize()
+                .background(
+                    dskDialogBackground.copy(alpha = dskDialogAlpha)
                 )
-
-                Column(
+                .clickable(
+                    onClick = { onDismiss() },
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() })
+        ) {
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth(dskDialogMaxWidth)
+                    .fillMaxHeight(dskDialogMaxHeight)
+                    .align(Alignment.Center)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }) {
+                        /* Do nothing, prevent dismissal on clicking inside */
+                    },
+                backgroundColor = dskDialogCardBackground,
+                elevation = 16.dp
+            ) {
+                Box(
                     modifier = Modifier
-                        .padding(16.dp)
                         .fillMaxSize()
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(dskDialogTitleBackground, RoundedCornerShape(8.dp)),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(8.dp, 0.dp),
-                            maxLines = 1,
-                            text = dskName
-                                .replace(".dsk", "")
-                                .replace(".DSK", "")
-                                .take(dskDialogTitleLength),
-                            fontFamily = customFontFamily,
-                            fontSize = dskDialogTitleFontSize,
-                            color = dskDialogTitleFontColor
-                        )
-                        IconButton(onClick = onDismiss) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Close",
-                                tint = Color.White
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Box(
+                    Image(
+                        alpha = dskDialogImageAlpha,
+                        painter = painterResource(
+                            id = backgroundResId,
+                        ),
+                        contentDescription = null,
                         modifier = Modifier
                             .fillMaxSize()
+                            .padding(dskDialogImagePadding)
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxSize()
                     ) {
-                        LazyColumn(
-                            modifier = Modifier.align(Alignment.Center)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(dskDialogTitleBackground, RoundedCornerShape(8.dp)),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            items(files) { file ->
-                                RenderDskItem(
-                                    file,
-                                    onClick = { onFileClick(file) })
+                            Text(
+                                modifier = Modifier.padding(8.dp, 0.dp),
+                                maxLines = 1,
+                                text = dskName
+                                    .replace(".dsk", "")
+                                    .replace(".DSK", "")
+                                    .take(dskDialogTitleLength),
+                                fontFamily = customFontFamily,
+                                fontSize = dskDialogTitleFontSize,
+                                color = dskDialogTitleFontColor
+                            )
+                            IconButton(onClick = onDismiss) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            LazyColumn(
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                items(files) { file ->
+                                    RenderDskItem(
+                                        file,
+                                        onClick = { onFileClick(file) })
+                                }
                             }
                         }
                     }

@@ -1,6 +1,10 @@
 package com.jmr.amstradm4board.ui
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,6 +26,32 @@ class AmstradViewModel @Inject constructor(
 
     private var lastPath = "/"
     var ipAddress: String = "192.168.1.39"
+
+    internal var isRefreshing by mutableStateOf(false)
+
+    internal var showDskDialog by mutableStateOf(false)
+
+    internal var selectedDskName by mutableStateOf("")
+
+    var dskFiles by mutableStateOf<List<DataFile>>(emptyList())
+
+//    var dskFiles by mutableStateOf<List<DataFile>>(emptyList())
+
+    fun toggleRefreshing(refreshing: Boolean) {
+        isRefreshing = refreshing
+    }
+
+    fun toggleDskDialog(show: Boolean) {
+        showDskDialog = show
+    }
+
+    fun setSelectedDskName(name: String) {
+        selectedDskName = name
+    }
+
+//    fun setDskFiles(files: List<DataFile>) {
+//        dskFiles = files
+//    }
 
     fun navigate(ip: String, path: String) {
         viewModelScope.launch {
