@@ -21,6 +21,7 @@ class AmstradViewModel @Inject constructor(
     val dataFileList: LiveData<List<DataFile>> get() = _dataFileList
 
     private var lastPath = "/"
+    var ipAddress: String = "192.168.1.39"
 
     fun navigate(ip: String, path: String) {
         viewModelScope.launch {

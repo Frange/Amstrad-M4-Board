@@ -25,7 +25,7 @@ object UtilsRepository {
         return gameList
     }
 
-    private fun getTypeOfFile(name: String): DataFileType {
+    fun getTypeOfFile(name: String): DataFileType {
         return when {
             isFolder(name) -> DataFileType.FOLDER
             isGame(name) -> DataFileType.GAME

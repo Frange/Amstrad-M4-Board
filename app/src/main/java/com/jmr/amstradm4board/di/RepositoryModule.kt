@@ -1,5 +1,6 @@
 package com.jmr.amstradm4board.di
 
+import android.app.Application
 import com.jmr.amstradm4board.data.service.AmstradApiService
 import com.jmr.amstradm4board.data.repository.AmstradRepository
 import com.jmr.amstradm4board.data.repository.AmstradRepositoryImpl
@@ -17,8 +18,9 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideAmstradRepository(
+        context: Application,
         service: AmstradApiService,
         client: OkHttpClient
-    ): AmstradRepository = AmstradRepositoryImpl(service, client)
+    ): AmstradRepository = AmstradRepositoryImpl(context, service, client)
 
 }

@@ -1,0 +1,51 @@
+//games/aaa JM/
+Abadia (1987).dsk,1,190K
+Angel Nieto Pole 500 (1990).dsk,1,43K
+Arkanoid (1987).dsk,1,190K
+Army Moves (1986).dsk,1,52K
+Aspar.dsk,1,190K
+Asterix and the Magic Cauldron (1987).dsk,1,33K
+Batman 1 (1986) - Mod.dsk,1,38K
+Batman 1 (1986).dsk,1,190K
+Batman 2 - The Caped Crusader (1987).dsk,1,66K
+Batman 3 The Movie.dsk,1,66K
+Bedlam (1988).dsk,1,190K
+Breakthru (1986).dsk,1,190K
+Bubble Bobble (1987).dsk,1,47K
+Buitre.dsk,1,190K
+Cauldron (1985).dsk,1,28K
+Chase HQ (1989).dsk,1,71K
+Cobra Pinball (1985).dsk,1,190K
+Daley Thompson(1988).dsk,1,190K
+Don Quijote.dsk,1,190K
+Donkey Kong (1986).dsk,1,190K
+El Equipo A (1988).dsk,1,62K
+Fernando Martin.DSK,1,190K
+Future Knight (1986).dsk,1,190K
+Gauntlet (1985).DSK,1,152K
+Ghost 'n' Goblins (1986).dsk,1,33K
+Golden Axe (1989).DSK,1,138K
+Golden Basket (1990).DSK,1,38K
+Gremmlins II - The New Batch (1990).DSK,1,104K
+Gryzor (1987).dsk,1,71K
+Head over Heels (1987).DSK,1,47K
+Impossaball (1986).DSK,1,28K
+Indiana Jones and the Temple of Doom (1987).dsk,1,199K
+Infiltrator (1986).dsk,1,190K
+Livingstone Supongo (1986).DSK,1,38K
+Livingstone Supongo II (1989).DSK,1,71K
+Mario Bros (1987).dsk,1,190K
+Martianoids (1987).DSK,1,24K
+Match Point (1985).DSK,1,19K
+Matchday (1985).dsk,1,190K
+Matchday 2 (1988).dsk,1,190K
+Megachess (1988).dsk,1,199K
+Michel Futbol Master (1989).DSK,1,62K
+Navy Moves [S] (1988).DSK,1,71K
+Nebulus (1988).DSK,1,28K
+Oh Mummy (1984).DSK,1,14K
+Paris-Dakar (1988).DSK,1,52K
+Perico Delgado Maillot Amarillo (1989).DSK,1,90K
+Punchy (1985).dsk,1,190K
+Regreso al CPC (2015).dsk,1,190K
+Robocop (1988).DSK,1,66K

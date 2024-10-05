@@ -1,0 +1,3 @@
+//games/aaa JM/Abadia (1987).dsk
+Abadia.bin,1,190K
+Abadia.bas,1,80K
