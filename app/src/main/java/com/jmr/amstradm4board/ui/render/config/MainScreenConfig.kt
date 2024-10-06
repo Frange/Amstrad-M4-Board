@@ -27,6 +27,7 @@ class MainScreenConfig {
 
         val isGameBackground = blueKeyboard
         val isDskBackground = blueKeyboard
+        val folderBackground = pastelYellowScreen
         val otherFilesBackground = blackKeyboard
 
         // Configuración de la pantalla

@@ -1,24 +1,31 @@
 package com.jmr.amstradm4board.ui.render
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jmr.amstradm4board.R
 import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.domain.model.DataFileType
 import com.jmr.amstradm4board.ui.Utils.customFontFamily
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.blackKeyboard
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.brightYellowScreen
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.folderBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.isDskBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.isGameBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.lightWhiteKeyboard
@@ -30,7 +37,7 @@ fun RenderDataFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
     val backgroundColor = when (file.type) {
         DataFileType.DSK -> isDskBackground
         DataFileType.GAME -> isGameBackground
-        DataFileType.FOLDER -> otherFilesBackground
+        DataFileType.FOLDER -> folderBackground
         DataFileType.OTHER -> otherFilesBackground
     }
 
@@ -50,6 +57,18 @@ fun RenderDataFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                painter = painterResource(
+                    id = if (file.type == DataFileType.FOLDER) android.R.drawable.star_on
+                    else android.R.drawable.star_off
+                ),
+                contentDescription = null,
+                tint = if (file.type == DataFileType.FOLDER) blackKeyboard else brightYellowScreen,  // Color del icono
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 8.dp)
+            )
+
             Text(
                 text = if (file.type != DataFileType.FOLDER) file.name
                     .replace(".dsk", "")
@@ -59,7 +78,7 @@ fun RenderDataFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
                 fontSize = 13.sp,
                 fontFamily = customFontFamily,
                 style = MaterialTheme.typography.body1,
-                color = brightYellowScreen,
+                color = if (file.type == DataFileType.FOLDER) blackKeyboard else brightYellowScreen,
                 modifier = Modifier.weight(1f)
             )
 

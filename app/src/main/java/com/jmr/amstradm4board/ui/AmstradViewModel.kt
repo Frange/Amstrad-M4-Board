@@ -35,8 +35,6 @@ class AmstradViewModel @Inject constructor(
 
     var dskFiles by mutableStateOf<List<DataFile>>(emptyList())
 
-//    var dskFiles by mutableStateOf<List<DataFile>>(emptyList())
-
     fun toggleRefreshing(refreshing: Boolean) {
         isRefreshing = refreshing
     }
@@ -48,10 +46,6 @@ class AmstradViewModel @Inject constructor(
     fun setSelectedDskName(name: String) {
         selectedDskName = name
     }
-
-//    fun setDskFiles(files: List<DataFile>) {
-//        dskFiles = files
-//    }
 
     fun navigate(ip: String, path: String) {
         viewModelScope.launch {
