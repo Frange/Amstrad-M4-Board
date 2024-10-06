@@ -3,13 +3,13 @@ package com.jmr.amstradm4board.ui.render.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jmr.amstradm4board.ui.AmstradViewModel
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.redKeyboard
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.resetCPCText
@@ -24,6 +24,7 @@ fun RenderResetButtonsRow(viewModel: AmstradViewModel) {
     ) {
         StyledRetroButton(
             text = resetCPCText,
+            fontSize = 13.sp,
             backgroundColor = redKeyboard,
             shadowColor = Color(0xFF990000),
             modifier = Modifier
@@ -34,6 +35,7 @@ fun RenderResetButtonsRow(viewModel: AmstradViewModel) {
 
         StyledRetroButton(
             text = resetM4Text,
+            fontSize = 13.sp,
             backgroundColor = redKeyboard,
             shadowColor = Color(0xFF990000),
             modifier = Modifier

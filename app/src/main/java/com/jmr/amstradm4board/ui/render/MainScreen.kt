@@ -40,7 +40,6 @@ import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.titleT
 fun RenderMainScreen() {
     val viewModel: AmstradViewModel = hiltViewModel()
 
-    val showDskDialog by remember { mutableStateOf(viewModel.showDskDialog) }
     val selectedDskName by remember { mutableStateOf(viewModel.selectedDskName) }
     val ip by remember { mutableStateOf(viewModel.ipAddress) }
 
@@ -74,7 +73,7 @@ fun RenderMainScreen() {
                     RenderList(viewModel, ip)
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 RenderDelButton(viewModel, ip)
             }
@@ -82,12 +81,12 @@ fun RenderMainScreen() {
     )
 
     RenderDskDialog(
-        showDskDialog,
-        dskName = selectedDskName,
+        viewModel.showDskDialog,
+        dskName = viewModel.selectedDskName,
         files = viewModel.dskFiles,
         onDismiss = { viewModel.toggleDskDialog(false) },
         onFileClick = { file ->
-            viewModel.runGame(ip, file.path + "/" + file.name)
+            viewModel.runGame(viewModel.ipAddress, file.path + "/" + file.name)
             viewModel.toggleDskDialog(false)
         }
     )

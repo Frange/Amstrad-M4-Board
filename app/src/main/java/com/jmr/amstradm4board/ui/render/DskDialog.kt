@@ -77,7 +77,6 @@ fun RenderDskDialog(
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }) {
-                        /* Do nothing, prevent dismissal on clicking inside */
                     },
                 backgroundColor = dskDialogCardBackground,
                 elevation = 16.dp

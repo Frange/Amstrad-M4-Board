@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jmr.amstradm4board.ui.Utils.customFontFamily
@@ -20,6 +21,7 @@ import com.jmr.amstradm4board.ui.Utils.customFontFamily
 @Composable
 fun StyledRetroButton(
     text: String,
+    fontSize: TextUnit,
     backgroundColor: Color,
     shadowColor: Color,
     modifier: Modifier = Modifier,
@@ -55,7 +57,7 @@ fun StyledRetroButton(
             Text(
                 text = text,
                 color = Color.White,
-                fontSize = 13.sp,
+                fontSize = fontSize,
                 fontWeight = FontWeight.Bold,
                 fontFamily = customFontFamily,
                 lineHeight = 28.sp,

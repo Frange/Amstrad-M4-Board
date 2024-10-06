@@ -26,10 +26,10 @@ class AmstradRepositoryImpl @Inject constructor(
         val isMock = true
 
         if (isMock) {
-            if (path.contains(".dsk")) {
-                return getMockDsk()
+            return if (path.contains(".dsk")) {
+                getMockDsk()
             } else {
-                return getMockDataList()
+                getMockDataList()
             }
         } else {
             val url = "http://$ip/config.cgi?ls=//${encodeForUrl(path)}"

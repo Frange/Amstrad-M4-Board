@@ -57,6 +57,8 @@ class MainScreenConfig {
         val enterButtonDarkBackground = darkBlueKeyboard
         val delButtonBackground = greenKeyboard
         val delButtonDarkBackground = darkGreenKeyboard
+        val delButtonHeight = 60.dp
+
         val enterButtonFontSize = 16.sp
         val enterButtonWidth = 130.dp
         val enterButtonHeight = 56.dp
