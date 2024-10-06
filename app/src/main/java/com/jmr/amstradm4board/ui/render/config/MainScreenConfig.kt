@@ -18,6 +18,7 @@ class MainScreenConfig {
         val blackKeyboard = Color(0xFF222222)
         val lightWhiteKeyboard = Color(0xFFD3D3D3)
         val greenKeyboard = Color(0xFF4CAF50)
+        val darkGreenKeyboard = Color(0xFF226600)
         val blueKeyboard = Color(0xFF2222CC)
         val darkBlueKeyboard = Color(0xFF222266)
 
@@ -48,8 +49,12 @@ class MainScreenConfig {
         val ipTextFieldHeight = 56.dp
         val ipFontSize = 12.sp
 
+        val resetRowHeight = 60.dp
+        val connectionRowHeight = 70.dp
         val enterButtonBackground = blueKeyboard
         val enterButtonDarkBackground = darkBlueKeyboard
+        val delButtonBackground = greenKeyboard
+        val delButtonDarkBackground = darkGreenKeyboard
         val enterButtonFontSize = 16.sp
         val enterButtonWidth = 130.dp
         val enterButtonHeight = 56.dp

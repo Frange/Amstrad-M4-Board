@@ -27,7 +27,6 @@ fun StyledRetroButton(
 ) {
     Box(
         modifier = modifier
-            .padding(8.dp)
             .background(
                 shadowColor,
                 shape = RoundedCornerShape(10.dp)
@@ -43,7 +42,7 @@ fun StyledRetroButton(
                 shape = RoundedCornerShape(10.dp)
             )
             .clickable(onClick = onClick)
-            .padding(16.dp)
+            .padding(8.dp)
     ) {
         Box(
             modifier = Modifier
