@@ -17,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +33,7 @@ import com.jmr.amstradm4board.ui.render.component.RenderDelButton
 import com.jmr.amstradm4board.ui.render.component.RenderList
 import com.jmr.amstradm4board.ui.render.component.RenderResetButtonsRow
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.brightYellowScreen
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.titleText
 
 
 @Composable
@@ -98,12 +98,11 @@ fun RenderHeaderRow() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.DarkGray)
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "AMSTRAD M4",
+            text = titleText,
             color = brightYellowScreen,
             fontSize = 24.sp,
             textAlign = TextAlign.Center,

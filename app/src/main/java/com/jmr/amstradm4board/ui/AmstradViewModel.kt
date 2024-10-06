@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jmr.amstradm4board.data.repository.AmstradRepository
 import com.jmr.amstradm4board.domain.model.DataFile
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.defaultIp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class AmstradViewModel @Inject constructor(
     val dataFileList: LiveData<List<DataFile>> get() = _dataFileList
 
     private var lastPath = "/"
-    var ipAddress: String = "192.168.1.39"
+    var ipAddress: String = defaultIp
 
     internal var isRefreshing by mutableStateOf(false)
 

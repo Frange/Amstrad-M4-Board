@@ -14,7 +14,8 @@ class MainScreenConfig {
         val black = Color(0xFF000000)
 
         val redKeyboard = Color(0xFFDD2222)
-        val darkGrayKeyboard = Color(0xFF282828)
+        val grayKeyboard = Color(0xFF282828)
+        val darkGrayKeyboard = Color(0xFF171717)
         val blackKeyboard = Color(0xFF222222)
         val lightWhiteKeyboard = Color(0xFFD3D3D3)
         val greenKeyboard = Color(0xFF4CAF50)
@@ -34,21 +35,21 @@ class MainScreenConfig {
         const val path = "games/aaa%20JM"
 
         //TOP
-        const val titleText = "Amstrad M4 Board"
+        const val titleText = "Amstrad M4"
         const val enterText = "ENTER"
         const val resetCPCText = "RESET CPC"
         const val resetM4Text = "RESET M4"
-        const val ipLabelText = "IP Address:"
+        const val ipLabelText = "IP:"
         const val defaultIp = "192.168.1.39"
         const val delButtonText = "DEL"
 
         val screenBackground = black
 
-        val ipBackground = darkGrayKeyboard
-        val ipEditTextBackground = darkGrayKeyboard
+        val ipEditTextBackground = grayKeyboard
+        val ipEditTextDarkBackground = darkGrayKeyboard
         val ipEditTextColor = pastelYellowScreen
         val ipTextFieldHeight = 56.dp
-        val ipFontSize = 12.sp
+        val ipFontSize = 18.sp
 
         val resetRowHeight = 60.dp
         val connectionRowHeight = 70.dp

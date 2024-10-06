@@ -1,6 +1,5 @@
 package com.jmr.amstradm4board.ui.render
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -19,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.jmr.amstradm4board.R
 import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.domain.model.DataFileType
 import com.jmr.amstradm4board.ui.Utils.customFontFamily
@@ -53,7 +51,7 @@ fun RenderDataFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -79,7 +77,8 @@ fun RenderDataFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
                 fontFamily = customFontFamily,
                 style = MaterialTheme.typography.body1,
                 color = if (file.type == DataFileType.FOLDER) blackKeyboard else brightYellowScreen,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
             )
 
             if (file.fileSize != "0") {

@@ -14,15 +14,12 @@ import com.jmr.amstradm4board.ui.AmstradViewModel
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.redKeyboard
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.resetCPCText
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.resetM4Text
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.resetRowHeight
 
 @Composable
 fun RenderResetButtonsRow(viewModel: AmstradViewModel) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp, 8.dp, 0.dp, 0.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         StyledRetroButton(
@@ -30,8 +27,8 @@ fun RenderResetButtonsRow(viewModel: AmstradViewModel) {
             backgroundColor = redKeyboard,
             shadowColor = Color(0xFF990000),
             modifier = Modifier
-                .height(resetRowHeight)
-                .weight(1f),
+                .weight(1f)
+                .padding(vertical = 8.dp),
             onClick = { viewModel.resetCPC() }
         )
 
@@ -40,8 +37,8 @@ fun RenderResetButtonsRow(viewModel: AmstradViewModel) {
             backgroundColor = redKeyboard,
             shadowColor = Color(0xFF990000),
             modifier = Modifier
-                .height(resetRowHeight)
-                .weight(1f),
+                .weight(1f)
+                .padding(vertical = 8.dp),
             onClick = { viewModel.resetM4() }
         )
     }
