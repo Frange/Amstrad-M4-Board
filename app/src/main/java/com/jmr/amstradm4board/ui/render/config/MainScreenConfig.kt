@@ -42,6 +42,8 @@ class MainScreenConfig {
         val screenBackground = black
 
         val ipBackground = darkGrayKeyboard
+        val ipEditTextBackground = darkGrayKeyboard
+        val ipEditTextColor = pastelYellowScreen
         val ipTextFieldHeight = 56.dp
         val ipFontSize = 12.sp
 

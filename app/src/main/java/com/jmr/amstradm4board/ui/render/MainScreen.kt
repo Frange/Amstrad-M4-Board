@@ -1,20 +1,20 @@
 package com.jmr.amstradm4board.ui.render
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,7 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,20 +30,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jmr.amstradm4board.ui.AmstradViewModel
 import com.jmr.amstradm4board.ui.Utils
 import com.jmr.amstradm4board.ui.Utils.customFontFamily
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.blueKeyboard
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.brightYellowScreen
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.delButtonText
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.greenKeyboard
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.lightWhiteKeyboard
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.path
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.screenBackground
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.titleText
 import com.jmr.amstradm4board.ui.drawableList
 import com.jmr.amstradm4board.ui.isFirstTime
 import com.jmr.amstradm4board.ui.render.component.RenderConnectionRow
 import com.jmr.amstradm4board.ui.render.component.RenderDelButton
 import com.jmr.amstradm4board.ui.render.component.RenderList
 import com.jmr.amstradm4board.ui.render.component.RenderResetButtonsRow
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.brightYellowScreen
 
 
 @Composable
@@ -61,21 +56,6 @@ fun RenderMainScreen() {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = titleText,
-                        fontFamily = customFontFamily,
-                        color = brightYellowScreen,
-                        textAlign = TextAlign.Center,
-                        fontSize = 16.sp
-                    )
-                },
-                backgroundColor = blueKeyboard,
-                contentColor = lightWhiteKeyboard,
-            )
-        },
         content = { paddingValues ->
             Column(
                 modifier = Modifier
@@ -85,6 +65,8 @@ fun RenderMainScreen() {
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+                RenderHeaderRow()
 
                 RenderResetButtonsRow(viewModel)
 
@@ -115,4 +97,24 @@ fun RenderMainScreen() {
             viewModel.toggleDskDialog(false)
         }
     )
+}
+
+@Composable
+fun RenderHeaderRow() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.DarkGray)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "AMSTRAD M4",
+            color = brightYellowScreen,
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            fontFamily = customFontFamily,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }

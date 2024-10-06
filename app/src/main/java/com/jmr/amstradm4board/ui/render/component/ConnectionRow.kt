@@ -14,18 +14,25 @@ import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jmr.amstradm4board.ui.AmstradViewModel
+import com.jmr.amstradm4board.ui.Utils.customFontFamily
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.enterButtonBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.enterButtonFontSize
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.enterCPCText
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.ipBackground
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.ipEditTextBackground
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.ipEditTextColor
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.lightWhiteKeyboard
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.path
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.screenBackground
@@ -47,13 +54,36 @@ fun RenderConnectionRow(viewModel: AmstradViewModel, ip: String) {
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "IP Address: \n${viewModel.ipAddress}",
+                text = "IP Address:",
                 color = Color.Yellow,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
+                fontFamily = customFontFamily,
                 modifier = Modifier
+                    .height(60.dp)
+//                    .background(ipBackground)
                     .fillMaxWidth()
-                    .background(Color.DarkGray)
-                    .padding(8.dp)
+                    .padding(14.dp)
+            )
+
+            TextField(
+                value = viewModel.ipAddress,
+                onValueChange = { newIp ->
+                    viewModel.ipAddress = newIp
+                },
+                modifier = Modifier
+                    .height(55.dp)
+                    .fillMaxWidth(),
+
+                textStyle = TextStyle(
+                    color = ipEditTextColor
+                ),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = ipEditTextBackground,
+                    unfocusedContainerColor = ipEditTextBackground,
+                    cursorColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                )
             )
         }
 
@@ -67,7 +97,6 @@ fun RenderConnectionRow(viewModel: AmstradViewModel, ip: String) {
         }
     }
 }
-
 
 @Composable
 fun RenderEnterButton(viewModel: AmstradViewModel, ip: String) {
