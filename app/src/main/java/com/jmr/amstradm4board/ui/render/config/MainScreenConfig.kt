@@ -19,6 +19,7 @@ class MainScreenConfig {
         val lightWhiteKeyboard = Color(0xFFD3D3D3)
         val greenKeyboard = Color(0xFF4CAF50)
         val blueKeyboard = Color(0xFF2222CC)
+        val darkBlueKeyboard = Color(0xFF222266)
 
         val pastelYellowScreen = Color(0xFFFFFF80)
         val brightYellowScreen = Color(0xFFFFFF00)
@@ -32,7 +33,7 @@ class MainScreenConfig {
 
         //TOP
         const val titleText = "Amstrad M4 Board"
-        const val enterCPCText = "ENTER"
+        const val enterText = "ENTER"
         const val resetCPCText = "RESET CPC"
         const val resetM4Text = "RESET M4"
         const val ipLabelText = "IP Address:"
@@ -48,6 +49,7 @@ class MainScreenConfig {
         val ipFontSize = 12.sp
 
         val enterButtonBackground = blueKeyboard
+        val enterButtonDarkBackground = darkBlueKeyboard
         val enterButtonFontSize = 16.sp
         val enterButtonWidth = 130.dp
         val enterButtonHeight = 56.dp
