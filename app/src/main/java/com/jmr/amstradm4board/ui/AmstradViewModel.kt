@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.jmr.amstradm4board.data.repository.AmstradRepository
 import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.defaultIp
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.initPath
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,7 +25,8 @@ class AmstradViewModel @Inject constructor(
     private val _dataFileList = MutableLiveData<List<DataFile>>()
     val dataFileList: LiveData<List<DataFile>> get() = _dataFileList
 
-    private var lastPath = "/"
+    private var lastPath = initPath
+    var path: String = lastPath
     var ipAddress: String = defaultIp
 
     internal var isRefreshing by mutableStateOf(false)
@@ -47,10 +49,10 @@ class AmstradViewModel @Inject constructor(
         selectedDskName = name
     }
 
-    fun navigate(ip: String, path: String) {
+    fun navigate(path: String) {
         viewModelScope.launch {
             try {
-                val gameFiles = repository.navigate(ip, path)
+                val gameFiles = repository.navigate(ipAddress, path)
 
                 lastPath = path
                 _dataFileList.postValue(gameFiles)
@@ -60,10 +62,10 @@ class AmstradViewModel @Inject constructor(
         }
     }
 
-    fun openDSK(ip: String, path: String, onFilesLoaded: (List<DataFile>) -> Unit) {
+    fun openDSK(path: String, onFilesLoaded: (List<DataFile>) -> Unit) {
         viewModelScope.launch {
             try {
-                val dskFiles = repository.navigate(ip, path)  // Método en el repositorio para obtener el contenido del .dsk
+                val dskFiles = repository.navigate(ipAddress, path)  // Método en el repositorio para obtener el contenido del .dsk
                 onFilesLoaded(dskFiles)
             } catch (e: Exception) {
                 Log.v("MY_LOG", "Exception: ${e.message}")
@@ -71,18 +73,18 @@ class AmstradViewModel @Inject constructor(
         }
     }
 
-    fun runGame(ip: String, path: String) {
+    fun runGame(path: String) {
         viewModelScope.launch {
             try {
-                repository.runGame(ip, path)
+                repository.runGame(ipAddress, path)
             } catch (e: Exception) {
                 Log.v("MY_LOG", "Exception: ${e.message}")
             }
         }
     }
 
-    fun goBack(ip: String) {
-        navigate(ip, cleanPath(lastPath))
+    fun goBack() {
+        navigate(cleanPath(lastPath))
     }
 
     private fun cleanPath(input: String): String {
@@ -90,14 +92,26 @@ class AmstradViewModel @Inject constructor(
     }
 
     fun resetM4() {
-
+        viewModelScope.launch {
+            try {
+                repository.resetM4(ipAddress)
+            } catch (e: Exception) {
+                Log.v("MY_LOG", "Exception: Reset M4 - ${e.message}")
+            }
+        }
     }
 
     fun resetCPC() {
-
+        viewModelScope.launch {
+            try {
+                repository.resetCPC(ipAddress)
+            } catch (e: Exception) {
+                Log.v("MY_LOG", "Exception: Reset CPC - ${e.message}")
+            }
+        }
     }
 
-    fun refreshFileList(ip: String) {
-        navigate(ip, lastPath)
+    fun refreshFileList() {
+        navigate(lastPath)
     }
 }

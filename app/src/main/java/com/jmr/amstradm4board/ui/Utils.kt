@@ -12,6 +12,10 @@ object Utils {
         Font(R.font.amstrad_cpc464, FontWeight.Normal)
     )
 
+    fun String.capitalizeFirstLetter(): String {
+        return this.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+    }
+
     fun getDskBackground(context: Context, drawableList: List<String>?, dskName: String): Int {
         val dskCleanedName = cleanName(dskName)
 

@@ -1,4 +1,4 @@
-package com.jmr.amstradm4board.ui.render
+package com.jmr.amstradm4board.ui.render.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,12 +20,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.domain.model.DataFileType
+import com.jmr.amstradm4board.ui.Utils.capitalizeFirstLetter
 import com.jmr.amstradm4board.ui.Utils.customFontFamily
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.blackKeyboard
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.brightYellowScreen
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.folderBackground
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.isDskBackground
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.isGameBackground
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.dskBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.lightWhiteKeyboard
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.otherFilesBackground
 
@@ -33,9 +33,9 @@ import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.otherF
 @Composable
 fun RenderDataFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
     val backgroundColor = when (file.type) {
-        DataFileType.DSK -> isDskBackground
-        DataFileType.GAME -> isGameBackground
         DataFileType.FOLDER -> folderBackground
+        DataFileType.DSK -> dskBackground
+        DataFileType.GAME -> otherFilesBackground
         DataFileType.OTHER -> otherFilesBackground
     }
 
@@ -53,7 +53,7 @@ fun RenderDataFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
                 .fillMaxWidth()
                 .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             Icon(
                 painter = painterResource(
@@ -68,8 +68,7 @@ fun RenderDataFileItem(file: DataFile, onClick: (DataFile) -> Unit) {
             )
 
             Text(
-                text = if (file.type != DataFileType.FOLDER) file.name
-                    .replace(".dsk", "")
+                text = if (file.type != DataFileType.FOLDER) file.name.capitalizeFirstLetter()
                     .replace(".DSK", "")
                     .take(20)
                 else file.name.uppercase().take(18),

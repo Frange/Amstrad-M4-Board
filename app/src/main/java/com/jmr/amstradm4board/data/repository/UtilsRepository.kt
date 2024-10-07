@@ -22,7 +22,10 @@ object UtilsRepository {
                 gameList.add(DataFile(path, name, type, size))
             }
         }
-        return gameList
+
+        return gameList.sortedWith(compareBy<DataFile> { it.type }.thenBy { it.name })
+
+//        return gameList
     }
 
     fun getTypeOfFile(name: String): DataFileType {
@@ -49,7 +52,15 @@ object UtilsRepository {
                 ".dsk",
                 ignoreCase = true
             ) -> false
-            else -> true
+            name.lowercase().endsWith(
+                ".bin",
+                ignoreCase = true
+            ) -> true
+            name.lowercase().endsWith(
+                ".bas",
+                ignoreCase = true
+            ) -> true
+            else -> false
         }
     }
 

@@ -9,4 +9,8 @@ interface AmstradRepository {
 
     suspend fun runGame(ip: String, path: String): Response?
 
+    suspend fun resetM4(ip: String)
+
+    suspend fun resetCPC(ip: String)
+
 }

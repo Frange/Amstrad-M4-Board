@@ -24,29 +24,27 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jmr.amstradm4board.ui.AmstradViewModel
 import com.jmr.amstradm4board.ui.Utils
 import com.jmr.amstradm4board.ui.Utils.customFontFamily
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.path
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.screenBackground
 import com.jmr.amstradm4board.ui.drawableList
 import com.jmr.amstradm4board.ui.isFirstTime
 import com.jmr.amstradm4board.ui.render.component.RenderConnectionRow
-import com.jmr.amstradm4board.ui.render.component.RenderDelButton
-import com.jmr.amstradm4board.ui.render.component.RenderList
+import com.jmr.amstradm4board.ui.render.component.RenderBackButton
+import com.jmr.amstradm4board.ui.render.list.RenderList
 import com.jmr.amstradm4board.ui.render.component.RenderResetButtonsRow
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.brightYellowScreen
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.titleText
+import com.jmr.amstradm4board.ui.render.dialog.RenderDskDialog
 
 
 @Composable
 fun RenderMainScreen() {
     val viewModel: AmstradViewModel = hiltViewModel()
-
-    val selectedDskName by remember { mutableStateOf(viewModel.selectedDskName) }
-    val ip by remember { mutableStateOf(viewModel.ipAddress) }
+    val path by remember { mutableStateOf(viewModel.path) }
 
     if (isFirstTime) {
         isFirstTime = false
         drawableList = Utils.getDrawableResourceNames()
-        viewModel.navigate(ip, path)
+        viewModel.navigate(path)
     }
 
     Scaffold(
@@ -63,19 +61,19 @@ fun RenderMainScreen() {
 
                 RenderResetButtonsRow(viewModel)
 
-                RenderConnectionRow(viewModel, ip)
+                RenderConnectionRow(viewModel)
 
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    RenderList(viewModel, ip)
+                    RenderList(viewModel)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                RenderDelButton(viewModel, ip)
+                RenderBackButton(viewModel)
             }
         }
     )
@@ -84,7 +82,7 @@ fun RenderMainScreen() {
         viewModel,
         onDismiss = { viewModel.toggleDskDialog(false) },
         onFileClick = { file ->
-            viewModel.runGame(viewModel.ipAddress, file.path + "/" + file.name)
+            viewModel.runGame(file.path + "/" + file.name)
             viewModel.toggleDskDialog(false)
         }
     )

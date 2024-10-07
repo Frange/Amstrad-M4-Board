@@ -18,22 +18,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.jmr.amstradm4board.ui.AmstradViewModel
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.connectionRowHeight
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.enterButtonBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.enterButtonDarkBackground
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.enterButtonFontSize
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.enterText
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.ipEditTextBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.ipEditTextColor
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.ipEditTextDarkBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.ipFontSize
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.lightWhiteKeyboard
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.path
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.initPath
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.screenBackground
 
 @Composable
-fun RenderConnectionRow(viewModel: AmstradViewModel, ip: String) {
+fun RenderConnectionRow(viewModel: AmstradViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,14 +93,14 @@ fun RenderConnectionRow(viewModel: AmstradViewModel, ip: String) {
 
         StyledRetroButton(
             text = enterText,
-            fontSize = 13.sp,
+            fontSize = enterButtonFontSize,
             backgroundColor = enterButtonBackground,
             shadowColor = enterButtonDarkBackground,
             modifier = Modifier
                 .padding(8.dp, 0.dp, 0.dp, 0.dp)
                 .weight(1f)
                 .height(connectionRowHeight),
-            onClick = { viewModel.navigate(ip, path) }
+            onClick = { viewModel.navigate(initPath) }
         )
     }
 }

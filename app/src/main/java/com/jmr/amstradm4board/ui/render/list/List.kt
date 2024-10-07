@@ -1,4 +1,4 @@
-package com.jmr.amstradm4board.ui.render.component
+package com.jmr.amstradm4board.ui.render.list
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,13 +13,9 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.jmr.amstradm4board.domain.model.DataFileType
 import com.jmr.amstradm4board.ui.AmstradViewModel
-import com.jmr.amstradm4board.ui.render.RenderDataFileItem
 
 @Composable
-fun RenderList(
-    viewModel: AmstradViewModel,
-    ip: String
-) {
+fun RenderList(viewModel: AmstradViewModel) {
     val files by viewModel.dataFileList.asFlow().collectAsState(initial = emptyList())
 
     SwipeRefresh(
@@ -28,7 +24,7 @@ fun RenderList(
         state = SwipeRefreshState(viewModel.isRefreshing),
         onRefresh = {
             viewModel.toggleRefreshing(true)
-            viewModel.refreshFileList(ip)
+            viewModel.refreshFileList()
             viewModel.toggleRefreshing(false)
         }
     ) {
@@ -39,7 +35,7 @@ fun RenderList(
 
                     when (clickedFile.type) {
                         DataFileType.DSK -> {
-                            viewModel.openDSK(ip, fullPath) { dskContentFiles ->
+                            viewModel.openDSK(fullPath) { dskContentFiles ->
                                 viewModel.selectedDskName = clickedFile.name
                                 viewModel.dskFiles = dskContentFiles
                                 viewModel.showDskDialog = true
@@ -47,17 +43,11 @@ fun RenderList(
                         }
 
                         DataFileType.GAME -> {
-                            viewModel.runGame(
-                                ip,
-                                fullPath
-                            )
+                            viewModel.runGame(fullPath)
                         }
 
                         DataFileType.FOLDER -> {
-                            viewModel.navigate(
-                                ip,
-                                fullPath
-                            )
+                            viewModel.navigate(fullPath)
                         }
 
                         DataFileType.OTHER -> {
