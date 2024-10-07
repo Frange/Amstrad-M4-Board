@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.jmr.amstradm4board.domain.model.DataFile
+import com.jmr.amstradm4board.ui.AmstradViewModel
 import com.jmr.amstradm4board.ui.Utils.customFontFamily
 import com.jmr.amstradm4board.ui.Utils.getDskBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.brightYellowScreen
@@ -47,15 +48,15 @@ import com.jmr.amstradm4board.ui.drawableList
 
 @Composable
 fun RenderDskDialog(
-    showDskDialog: Boolean,
-    dskName: String,
-    files: List<DataFile>,
+    viewModel: AmstradViewModel,
     onDismiss: () -> Unit,
     onFileClick: (DataFile) -> Unit
 ) {
-    if (showDskDialog) {
+    if (viewModel.showDskDialog) {
+        val context = LocalContext.current
+
         val backgroundResId =
-            getDskBackground(LocalContext.current, drawableList, dskName.lowercase())
+            getDskBackground(context, drawableList, viewModel.selectedDskName.lowercase())
 
         Box(
             modifier = Modifier
@@ -111,7 +112,7 @@ fun RenderDskDialog(
                             Text(
                                 modifier = Modifier.padding(8.dp, 0.dp),
                                 maxLines = 1,
-                                text = dskName
+                                text = viewModel.selectedDskName
                                     .replace(".dsk", "")
                                     .replace(".DSK", "")
                                     .take(dskDialogTitleLength),
@@ -137,7 +138,7 @@ fun RenderDskDialog(
                             LazyColumn(
                                 modifier = Modifier.align(Alignment.Center)
                             ) {
-                                items(files) { file ->
+                                items(viewModel.dskFiles) { file ->
                                     RenderDskItem(
                                         file,
                                         onClick = { onFileClick(file) })

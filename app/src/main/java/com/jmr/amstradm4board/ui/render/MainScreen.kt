@@ -81,9 +81,7 @@ fun RenderMainScreen() {
     )
 
     RenderDskDialog(
-        viewModel.showDskDialog,
-        dskName = viewModel.selectedDskName,
-        files = viewModel.dskFiles,
+        viewModel,
         onDismiss = { viewModel.toggleDskDialog(false) },
         onFileClick = { file ->
             viewModel.runGame(viewModel.ipAddress, file.path + "/" + file.name)

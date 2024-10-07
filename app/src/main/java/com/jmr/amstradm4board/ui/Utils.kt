@@ -13,15 +13,10 @@ object Utils {
     )
 
     fun getDskBackground(context: Context, drawableList: List<String>?, dskName: String): Int {
-        val cleanedName = dskName
-            .lowercase()
-            .replace(".dsk", "")
-            .replace("-", "_")
-            .replace(" ", "_")
-            .trim()
+        val dskCleanedName = cleanName(dskName)
 
         val exactMatchId =
-            context.resources.getIdentifier(cleanedName, "drawable", context.packageName)
+            context.resources.getIdentifier(dskCleanedName, "drawable", context.packageName)
         if (drawableList.isNullOrEmpty()) {
             return R.drawable.amstrad
         }
@@ -34,11 +29,12 @@ object Utils {
         var bestScore = 0
 
         for (drawableName in drawableList) {
-            val score = similarityScore(cleanedName, drawableName)
+            val drawableNameCleaned = cleanName(drawableName)
+            val score = similarityScore(dskCleanedName, drawableNameCleaned)
             if (score > bestScore) {
                 bestScore = score
                 bestMatchId =
-                    context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+                    context.resources.getIdentifier(drawableNameCleaned, "drawable", context.packageName)
             }
         }
 
@@ -47,6 +43,17 @@ object Utils {
         }
 
         return R.drawable.amstrad
+    }
+
+    private fun cleanName(fileName: String): String {
+        return fileName
+            .lowercase()
+            .replace(".dsk", "")
+            .replace("-", "_")
+            .replace(" ", "_")
+            .replace("__", "_")
+            .replace("__", "_")
+            .trim()
     }
 
     fun getDrawableResourceNames(): List<String> {
@@ -72,9 +79,10 @@ object Utils {
     }
 
     private fun similarityScore(str1: String, str2: String): Int {
-        val words1 = str1.split("_")
-        val words2 = str2.split("_")
+        val words1 = str1.split("_", "(", ")", " ").filter { it.length > 2 } // Filtrar palabras cortas
+        val words2 = str2.split("_", "(", ")", " ").filter { it.length > 2 }
 
         return words1.intersect(words2.toSet()).size
     }
+
 }
