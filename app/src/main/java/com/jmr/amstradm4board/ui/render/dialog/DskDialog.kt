@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.ui.AmstradViewModel
 import com.jmr.amstradm4board.ui.Utils.customFontFamily
@@ -35,7 +36,6 @@ import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.dskDia
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.dskDialogTitleBackground
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.dskDialogTitleFontColor
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.dskDialogTitleFontSize
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.dskDialogTitleLength
 import com.jmr.amstradm4board.ui.drawableList
 
 
@@ -88,12 +88,14 @@ fun RenderDskDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            modifier = Modifier.padding(8.dp, 0.dp),
-                            maxLines = 1,
-                            text = viewModel.selectedDskName
+                            modifier = Modifier
+                                .padding(8.dp, 0.dp)
+                                .width(300.dp),
+                            maxLines = 2,
+                            text = viewModel.selectedDskName.uppercase()
                                 .replace(".dsk", "")
-                                .replace(".DSK", "")
-                                .take(dskDialogTitleLength),
+                                .replace(".DSK", ""),
+                            lineHeight = 20.sp,
                             fontFamily = customFontFamily,
                             fontSize = dskDialogTitleFontSize,
                             color = dskDialogTitleFontColor
@@ -121,13 +123,7 @@ fun RenderDskDialog(
                             modifier = Modifier
                                 .height(300.dp)
                                 .width(170.dp)
-//                                .padding(
-//                                    start = 0.dp,
-//                                    top = 30.dp,
-//                                    end = 0.dp,
-//                                    bottom = 0.dp
-//                                )
-                                .clip(RectangleShape) // Mantiene la forma rectangular después del recorte
+                                .clip(RectangleShape)
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))

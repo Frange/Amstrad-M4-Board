@@ -10,7 +10,7 @@ class MainScreenConfig {
     // Paleta de colores basada en el Amstrad CPC
 
     companion object {
-        const val isMock = false
+        const val isMock = true
         const val defaultIp = "192.168.1.39"
 //        const val path = ""
         const val initPath = "games/aaa%20JM"
@@ -72,9 +72,9 @@ class MainScreenConfig {
         const val dskDialogMaxHeight = 0.7f
         const val dskDialogAlpha = 0.9f
         val dskDialogTitleBackground = blueKeyboard
-        val dskDialogTitleFontSize = 16.sp
+        val dskDialogTitleFontSize = 12.sp
         val dskDialogTitleFontColor = brightYellowScreen
-        const val dskDialogTitleLength = 16
+//        const val dskDialogTitleLength = 25
 
         // Configuración de los elementos del diálogo DSK
         val dskItemPadding = 2.dp
