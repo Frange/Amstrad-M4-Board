@@ -10,7 +10,8 @@ License and Usage
 
 This project is free to use and modify, provided that it remains non-profit. It is also essential to give proper credit to the individuals who made it possible. The purpose of this initiative is to promote learning and creativity within the Amstrad and M4 board user community.
 
-![alt text](https://github.com/Frange/Amstrad-M4-Board/blob/master/image1.jpg?raw=true)
-![alt text](https://github.com/Frange/Amstrad-M4-Board/blob/master/image2.jpg?raw=true)
-![alt text](https://github.com/Frange/Amstrad-M4-Board/blob/master/image3.jpg?raw=true)
-![alt text](https://github.com/Frange/Amstrad-M4-Board/blob/master/image4.jpg?raw=true)
+![screenshot](image1.png)
+![screenshot](image2.png)
+![screenshot](image3.png)
+![screenshot](image4.png)
+
