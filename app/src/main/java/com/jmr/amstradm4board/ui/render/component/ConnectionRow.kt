@@ -65,7 +65,7 @@ fun RenderConnectionRow(viewModel: AmstradViewModel) {
             TextField(
                 value = viewModel.ipAddress,
                 onValueChange = { newIp ->
-                    viewModel.ipAddress = newIp
+                    viewModel.setNewIp(newIp)
                 },
                 modifier = Modifier
                     .fillMaxHeight()

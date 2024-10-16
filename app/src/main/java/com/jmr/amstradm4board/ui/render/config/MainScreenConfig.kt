@@ -10,10 +10,10 @@ class MainScreenConfig {
     // Paleta de colores basada en el Amstrad CPC
 
     companion object {
-        const val isMock = true
+        const val isMock = false
         const val defaultIp = "192.168.1.39"
-//        const val path = ""
-        const val initPath = "games/aaa%20JM"
+        const val initPath = ""
+//        const val initPath = "games/aaa%20JM"
 
         val black = Color(0xFF000000)
 

@@ -8,8 +8,9 @@ import com.jmr.amstradm4board.data.service.AmstradApiService
 import com.jmr.amstradm4board.domain.model.Command
 import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.domain.model.DataFileType
-import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.isMock
+import com.jmr.amstradm4board.ui.Utils.capitalizeFirstLetter
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.initPath
+import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.isMock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -24,16 +25,43 @@ class AmstradRepositoryImpl @Inject constructor(
     private val client: OkHttpClient
 ) : AmstradRepository {
 
+    private fun getUrl(
+        ip: String,
+        command: Command,
+        param1: String = "",
+        param2: String = "",
+        param3: String = ""
+    ): String {
+        return when (command) {
+            Command.NAVIGATE -> "http://$ip/config.cgi?${command.value}=//${encodeForUrl(param1)}"
+            Command.RUN -> "http://$ip/config.cgi?${command.value}=//${encodeForUrl(param1)}"
+            Command.RESET_M4 -> "http://$ip/config.cgi?${command.value}"
+            Command.RESET_CPC -> "http://$ip/config.cgi?${command.value}"
+            Command.HACK_MENU -> "http://$ip/config.cgi?${command.value}"
+            Command.RENAME_CPC -> "http://$ip/config.cgi?${command.value}=$param1"
+
+            Command.CHANGE_SSID,
+            Command.CHANGE_PASSWORD -> "http://$ip/config.cgi?${Command.CHANGE_SSID.value}=$param1&${Command.CHANGE_PASSWORD.value}=$param2"
+            
+            Command.CHANGE_SUBNET,
+            Command.CHANGE_GATEWAY,
+            Command.CHANGE_LOCAL_IP -> "http://$ip/config.cgi?${Command.CHANGE_LOCAL_IP.value}=$param1&${Command.CHANGE_SUBNET.value}=$param2&${Command.CHANGE_GATEWAY.value}=$param3"
+
+            Command.CREATE_FOLDER -> "http://$ip/config.cgi?${command.value}=$param1"
+            Command.REMOVE -> "http://$ip/config.cgi?${command.value}=$param1"
+            Command.START_CART -> "http://$ip/config.cgi?${command.value}=$param1"
+        }
+    }
 
     override suspend fun navigate(ip: String, path: String): List<DataFile> {
         if (isMock) {
             return if (path.lowercase().contains(".dsk")) {
-                getMockDsk()
+                getMockDsk(path)
             } else {
                 getMockDataList()
             }
         } else {
-            val url = "http://$ip/config.cgi?${Command.NAVIGATE.value}=//${encodeForUrl(path)}"
+            val url = getUrl(ip = ip, command = Command.NAVIGATE, param1 = path)
 
             val request = Request.Builder()
                 .url(url)
@@ -47,7 +75,7 @@ class AmstradRepositoryImpl @Inject constructor(
     }
 
     override suspend fun runGame(ip: String, path: String): Response {
-        val url = "http://$ip/config.cgi?${Command.RUN.value}=//${encodeForUrl(path)}"
+        val url = getUrl(ip = ip, command = Command.RUN, param1 = path)
         val request = Request.Builder()
             .url(url)
             .build()
@@ -58,7 +86,7 @@ class AmstradRepositoryImpl @Inject constructor(
     }
 
     override suspend fun resetM4(ip: String) {
-        val url = "http://$ip/config.cgi?${Command.RESET_M4.value}}"
+        val url = getUrl(ip = ip, command = Command.RESET_M4)
         val request = Request.Builder()
             .url(url)
             .build()
@@ -69,7 +97,7 @@ class AmstradRepositoryImpl @Inject constructor(
     }
 
     override suspend fun resetCPC(ip: String) {
-        val url = "http://$ip/config.cgi?${Command.RESET_CPC.value}"
+        val url = getUrl(ip = ip, command = Command.RESET_CPC)
         val request = Request.Builder()
             .url(url)
             .build()
@@ -95,8 +123,7 @@ class AmstradRepositoryImpl @Inject constructor(
 
     private suspend fun createFolder(ip: String, pathWithFolder: String) {
 //        http://192.168.1.39/config.cgi?mkdir=%2F%2F%2F%2Fgames%2Ftest
-        val url =
-            "http://$ip/config.cgi?${Command.CREATE_FOLDER.value}=$pathWithFolder"
+        val url = getUrl(ip = ip, command = Command.CREATE_FOLDER, param1 = pathWithFolder)
         val request = Request.Builder()
             .url(url)
             .build()
@@ -106,10 +133,9 @@ class AmstradRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun startCart(ip: String, localIp: String, password: String, gateway: String) {
+    private suspend fun startCart(ip: String) {
 //        http://192.168.1.39/config.cgi?cctr=Start+Cart // NO IDEA WHATS THAT
-        val url =
-            "http://$ip/config.cgi?${Command.START_CART.value}=Start+Cart"
+        val url = getUrl(ip = ip, command = Command.START_CART, param1 = "Start+Cart")
         val request = Request.Builder()
             .url(url)
             .build()
@@ -119,10 +145,16 @@ class AmstradRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun changeIP(ip: String, localIp: String, password: String, gateway: String) {
+    private suspend fun changeIP(ip: String, localIp: String, subnet: String, gateway: String) {
 //    http://192.168.1.39/config.cgi?ip=192.168.1.39&nm=255.255.255.0&gw=192.168.1.1
-        val url =
-            "http://$ip/config.cgi?${Command.CHANGE_LOCAL_IP.value}=$localIp&${Command.CHANGE_SUBNET.value}=$password&${Command.CHANGE_GATEWAY.value}=$gateway"
+        val url = getUrl(
+            ip = ip,
+            command = Command.CHANGE_LOCAL_IP,
+            param1 = localIp,
+            param2 = subnet,
+            param3 = gateway
+        )
+
         val request = Request.Builder()
             .url(url)
             .build()
@@ -134,8 +166,8 @@ class AmstradRepositoryImpl @Inject constructor(
 
     private suspend fun changeWifi(ip: String, ssid: String, password: String) {
 //        http://192.168.1.39/config.cgi?ssid=TP-LINK_E7364C&pw=aaaaa
-        val url =
-            "http://$ip/config.cgi?${Command.CHANGE_SSID.value}=$ssid&${Command.CHANGE_PASSWORD.value}=$password"
+        val url = getUrl(ip = ip, command = Command.CHANGE_SSID, param1 = ssid, param2 = password)
+
         val request = Request.Builder()
             .url(url)
             .build()
@@ -147,7 +179,8 @@ class AmstradRepositoryImpl @Inject constructor(
 
     private suspend fun renameCPC(ip: String, name: String) {
 //        http://192.168.1.39/config.cgi?navn=CPC464
-        val url = "http://$ip/config.cgi?${Command.RENAME_CPC.value}=$name"
+        val url = getUrl(ip = ip, command = Command.RENAME_CPC, param1 = name)
+
         val request = Request.Builder()
             .url(url)
             .build()
@@ -157,19 +190,24 @@ class AmstradRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun getMockDsk(): List<DataFile> {
+    private fun getMockDsk(path: String): List<DataFile> {
         val gameList = mutableListOf<DataFile>()
 
+        val game = path.lowercase().replace("/", "").replace(".dsk", "").capitalizeFirstLetter()
         val inputStream = context.assets.open("mock_dsk.txt")
+
+        var lineNumber = 0
         inputStream.bufferedReader().useLines { lines ->
             lines.forEach { line ->
                 val parts = line.split(",")
                 if (parts.size == 3) {
-                    val name = "MOCK ${parts[0].trim()}"
+                    val extension = if (lineNumber == 1) ".BIN" else ".BAS"
+                    val name = "${game.trim()}${extension}"
                     val size = parts[2].trim()
-                    val type = getTypeOfFile(name)
+                    val type = DataFileType.GAME
                     gameList.add(DataFile(initPath, name, type, size))
                 }
+                lineNumber += 1
             }
         }
         return gameList

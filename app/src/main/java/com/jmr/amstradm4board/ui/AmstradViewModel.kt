@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jmr.amstradm4board.data.repository.AmstradRepository
+import com.jmr.amstradm4board.data.repository.AmstradSharedPreference
 import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.defaultIp
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.initPath
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AmstradViewModel @Inject constructor(
-    private val repository: AmstradRepository
+    private val repository: AmstradRepository,
+    private val sharedPreference: AmstradSharedPreference
 ) : ViewModel() {
 
     private val _dataFileList = MutableLiveData<List<DataFile>>()
@@ -27,7 +29,6 @@ class AmstradViewModel @Inject constructor(
 
     private var lastPath = initPath
     var path: String = lastPath
-    var ipAddress: String = defaultIp
 
     internal var isRefreshing by mutableStateOf(false)
 
@@ -36,6 +37,9 @@ class AmstradViewModel @Inject constructor(
     internal var selectedDskName by mutableStateOf("")
 
     var dskFiles by mutableStateOf<List<DataFile>>(emptyList())
+
+    var ipAddress by mutableStateOf(getIp())
+        private set
 
     fun toggleRefreshing(refreshing: Boolean) {
         isRefreshing = refreshing
@@ -65,7 +69,10 @@ class AmstradViewModel @Inject constructor(
     fun openDSK(path: String, onFilesLoaded: (List<DataFile>) -> Unit) {
         viewModelScope.launch {
             try {
-                val dskFiles = repository.navigate(ipAddress, path)  // Método en el repositorio para obtener el contenido del .dsk
+                val dskFiles = repository.navigate(
+                    ipAddress,
+                    path
+                )  // Método en el repositorio para obtener el contenido del .dsk
                 onFilesLoaded(dskFiles)
             } catch (e: Exception) {
                 Log.v("MY_LOG", "Exception: ${e.message}")
@@ -85,6 +92,10 @@ class AmstradViewModel @Inject constructor(
 
     fun goBack() {
         navigate(cleanPath(lastPath))
+    }
+
+    private fun getIp(): String {
+        return sharedPreference.getLastIpAddress()
     }
 
     private fun cleanPath(input: String): String {
@@ -113,5 +124,21 @@ class AmstradViewModel @Inject constructor(
 
     fun refreshFileList() {
         navigate(lastPath)
+    }
+
+    fun setNewIp(newIp: String) {
+        if (isValidIpAddress(newIp)) {
+            sharedPreference.saveIpAddress(newIp)
+            ipAddress = newIp
+        }
+    }
+
+    private fun isValidIpAddress(ip: String): Boolean {
+        val ipRegex = Regex(
+            "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}" +
+                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\$"
+        )
+
+        return ip.matches(ipRegex)
     }
 }

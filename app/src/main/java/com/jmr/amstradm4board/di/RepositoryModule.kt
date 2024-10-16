@@ -4,6 +4,7 @@ import android.app.Application
 import com.jmr.amstradm4board.data.service.AmstradApiService
 import com.jmr.amstradm4board.data.repository.AmstradRepository
 import com.jmr.amstradm4board.data.repository.AmstradRepositoryImpl
+import com.jmr.amstradm4board.data.repository.AmstradSharedPreference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,5 +23,11 @@ object RepositoryModule {
         service: AmstradApiService,
         client: OkHttpClient
     ): AmstradRepository = AmstradRepositoryImpl(context, service, client)
+
+    @Singleton
+    @Provides
+    fun provideAmstradSharedPreference(
+        context: Application,
+    ): AmstradSharedPreference = AmstradSharedPreference(context)
 
 }
