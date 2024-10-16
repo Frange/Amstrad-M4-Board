@@ -39,7 +39,7 @@ import com.jmr.amstradm4board.ui.render.dialog.RenderDskDialog
 @Composable
 fun RenderMainScreen() {
     val viewModel: AmstradViewModel = hiltViewModel()
-    val path by remember { mutableStateOf(viewModel.path) }
+    val path by remember { mutableStateOf(viewModel.lastPath) }
 
     if (isFirstTime) {
         isFirstTime = false
@@ -83,7 +83,6 @@ fun RenderMainScreen() {
         onDismiss = { viewModel.toggleDskDialog(false) },
         onFileClick = { file ->
             viewModel.runGame(file.path + "/" + file.name)
-            viewModel.toggleDskDialog(false)
         }
     )
 }

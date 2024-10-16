@@ -65,6 +65,7 @@ class AmstradRepositoryImpl @Inject constructor(
                 getMockDataList()
             }
         } else {
+//            val url = "http://192.168.1.39/config.cgi?ls=%2F%2F%2Fgames%2Faaa%20JM%2FBatman%203%20The%20Movie.dsk"
             val url = getUrl(ip = ip, command = Command.NAVIGATE, param1 = path)
 
             val request = Request.Builder()

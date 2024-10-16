@@ -16,15 +16,17 @@ import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.backBu
 
 @Composable
 fun RenderBackButton(viewModel: AmstradViewModel) {
-    StyledRetroButton(
-        text = backButtonText,
-        fontSize = 14.sp,
-        backgroundColor = backButtonBackground,
-        shadowColor = backButtonDarkBackground,
-        modifier = Modifier
-            .padding(0.dp, 0.dp, 0.dp, 0.dp)
-            .width(200.dp)
-            .height(backButtonHeight),
-        onClick = { viewModel.goBack() }
-    )
+    if (viewModel.lastPath != "") {
+        StyledRetroButton(
+            text = backButtonText,
+            fontSize = 14.sp,
+            backgroundColor = backButtonBackground,
+            shadowColor = backButtonDarkBackground,
+            modifier = Modifier
+                .padding(0.dp, 0.dp, 0.dp, 0.dp)
+                .width(200.dp)
+                .height(backButtonHeight),
+            onClick = { viewModel.goBack() }
+        )
+    }
 }

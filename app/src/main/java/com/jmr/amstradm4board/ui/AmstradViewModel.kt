@@ -27,17 +27,13 @@ class AmstradViewModel @Inject constructor(
     private val _dataFileList = MutableLiveData<List<DataFile>>()
     val dataFileList: LiveData<List<DataFile>> get() = _dataFileList
 
-    private var lastPath = initPath
-    var path: String = lastPath
+    var lastPath by mutableStateOf(initPath)
+        private set
 
     internal var isRefreshing by mutableStateOf(false)
-
     internal var showDskDialog by mutableStateOf(false)
-
     internal var selectedDskName by mutableStateOf("")
-
     var dskFiles by mutableStateOf<List<DataFile>>(emptyList())
-
     var ipAddress by mutableStateOf(getIp())
         private set
 
@@ -72,7 +68,7 @@ class AmstradViewModel @Inject constructor(
                 val dskFiles = repository.navigate(
                     ipAddress,
                     path
-                )  // Método en el repositorio para obtener el contenido del .dsk
+                )
                 onFilesLoaded(dskFiles)
             } catch (e: Exception) {
                 Log.v("MY_LOG", "Exception: ${e.message}")

@@ -1,6 +1,7 @@
 package com.jmr.amstradm4board.ui
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -36,9 +37,10 @@ object Utils {
             val drawableNameCleaned = cleanName(drawableName)
             val score = similarityScore(dskCleanedName, drawableNameCleaned)
             if (score > bestScore) {
+                Log.v("MY_LOGS", "Best score is: $score - $drawableName ---> $dskCleanedName")
                 bestScore = score
                 bestMatchId =
-                    context.resources.getIdentifier(drawableNameCleaned, "drawable", context.packageName)
+                    context.resources.getIdentifier(drawableName, "drawable", context.packageName)
             }
         }
 
