@@ -32,7 +32,7 @@ class AmstradRepositoryImpl @Inject constructor(
         param2: String = "",
         param3: String = ""
     ): String {
-        return when (command) {
+        val url = when (command) {
             Command.NAVIGATE -> "http://$ip/config.cgi?${command.value}=//${encodeForUrl(param1)}"
             Command.RUN -> "http://$ip/config.cgi?${command.value}=//${encodeForUrl(param1)}"
             Command.RESET_M4 -> "http://$ip/config.cgi?${command.value}"
@@ -42,7 +42,7 @@ class AmstradRepositoryImpl @Inject constructor(
 
             Command.CHANGE_SSID,
             Command.CHANGE_PASSWORD -> "http://$ip/config.cgi?${Command.CHANGE_SSID.value}=$param1&${Command.CHANGE_PASSWORD.value}=$param2"
-            
+
             Command.CHANGE_SUBNET,
             Command.CHANGE_GATEWAY,
             Command.CHANGE_LOCAL_IP -> "http://$ip/config.cgi?${Command.CHANGE_LOCAL_IP.value}=$param1&${Command.CHANGE_SUBNET.value}=$param2&${Command.CHANGE_GATEWAY.value}=$param3"
@@ -51,6 +51,10 @@ class AmstradRepositoryImpl @Inject constructor(
             Command.REMOVE -> "http://$ip/config.cgi?${command.value}=$param1"
             Command.START_CART -> "http://$ip/config.cgi?${command.value}=$param1"
         }
+
+        Log.v("MY_LOGS", "URL: $url")
+
+        return url
     }
 
     override suspend fun navigate(ip: String, path: String): List<DataFile> {
