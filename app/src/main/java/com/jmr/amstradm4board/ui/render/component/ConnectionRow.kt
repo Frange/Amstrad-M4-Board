@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,8 @@ import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.screen
 
 @Composable
 fun RenderConnectionRow(viewModel: AmstradViewModel) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,7 +103,10 @@ fun RenderConnectionRow(viewModel: AmstradViewModel) {
                 .padding(8.dp, 0.dp, 0.dp, 0.dp)
                 .weight(1f)
                 .height(connectionRowHeight),
-            onClick = { viewModel.navigate(initPath) }
+            onClick = {
+                keyboardController?.hide()
+                viewModel.retryFileList()
+            }
         )
     }
 }

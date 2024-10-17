@@ -3,13 +3,15 @@ package com.jmr.amstradm4board.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jmr.amstradm4board.data.repository.AmstradRepository
 import com.jmr.amstradm4board.data.repository.AmstradSharedPreference
+import com.jmr.amstradm4board.di.NetworkModule
+import com.jmr.amstradm4board.di.NetworkModule.provideOkHttpClient
 import com.jmr.amstradm4board.domain.model.DataFile
+import com.jmr.amstradm4board.ui.Utils.cleanPath
+import com.jmr.amstradm4board.ui.Utils.isValidIpAddress
 import com.jmr.amstradm4board.ui.Utils.logs
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.initPath
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,9 +65,10 @@ class AmstradViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val items = repository.navigate(ipAddress, path)
-                _dataFileList.value = items // Actualiza el flujo
+                _dataFileList.value = items
                 listState = ListState.Loaded(items)
             } catch (e: Exception) {
+                lastPath = initPath
                 listState = ListState.Error
             }
         }
@@ -82,16 +85,11 @@ class AmstradViewModel @Inject constructor(
         }
     }
 
-    // Resto de funciones sin cambios...
-
-    fun refreshFileList() {
-        navigate(lastPath)
-    }
-
     fun setNewIp(newIp: String) {
         if (isValidIpAddress(newIp)) {
             sharedPreference.saveIpAddress(newIp)
             ipAddress = newIp
+            NetworkModule.updateRetrofit(newIp, sharedPreference, provideOkHttpClient())
         }
     }
 
@@ -105,16 +103,20 @@ class AmstradViewModel @Inject constructor(
         }
     }
 
+    fun refreshFileList() {
+        navigate(initPath)
+    }
+
+    fun retryFileList() {
+        navigate(lastPath)
+    }
+
     fun goBack() {
         navigate(cleanPath(lastPath))
     }
 
     private fun getIp(): String {
         return sharedPreference.getLastIpAddress()
-    }
-
-    private fun cleanPath(input: String): String {
-        return input.substringBeforeLast("/", "")
     }
 
     fun resetM4() {
@@ -137,11 +139,4 @@ class AmstradViewModel @Inject constructor(
         }
     }
 
-    private fun isValidIpAddress(ip: String): Boolean {
-        val ipRegex = Regex(
-            "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}" +
-                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\$"
-        )
-        return ip.matches(ipRegex)
-    }
 }

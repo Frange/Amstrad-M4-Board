@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +42,7 @@ import com.jmr.amstradm4board.ui.render.list.RenderListWithErrorState
 fun RenderMainScreen() {
     val viewModel: AmstradViewModel = hiltViewModel()
     val path by remember { mutableStateOf(viewModel.lastPath) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     if (isFirstTime) {
         isFirstTime = false
@@ -71,7 +73,10 @@ fun RenderMainScreen() {
                 ) {
                     RenderListWithErrorState(
                         viewModel = viewModel,
-                        onRetryClick = { viewModel.refreshFileList() }
+                        onRetryClick = {
+                            keyboardController?.hide()
+                            viewModel.retryFileList()
+                        }
                     )
                 }
 
