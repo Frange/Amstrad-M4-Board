@@ -34,6 +34,7 @@ import com.jmr.amstradm4board.ui.render.component.RenderResetButtonsRow
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.brightYellowScreen
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.titleText
 import com.jmr.amstradm4board.ui.render.dialog.RenderDskDialog
+import com.jmr.amstradm4board.ui.render.list.RenderListWithErrorState
 
 
 @Composable
@@ -68,7 +69,10 @@ fun RenderMainScreen() {
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    RenderList(viewModel)
+                    RenderListWithErrorState(
+                        viewModel = viewModel,
+                        onRetryClick = { viewModel.refreshFileList() }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -86,6 +90,7 @@ fun RenderMainScreen() {
         }
     )
 }
+
 
 @Composable
 fun RenderHeaderRow() {

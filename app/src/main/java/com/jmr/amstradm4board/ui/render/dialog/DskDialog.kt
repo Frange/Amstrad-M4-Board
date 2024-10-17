@@ -89,8 +89,8 @@ fun RenderDskDialog(
                     ) {
                         Text(
                             modifier = Modifier
-                                .padding(8.dp, 0.dp)
-                                .width(300.dp),
+                                .padding(18.dp, 0.dp)
+                                .weight(1f),
                             maxLines = 2,
                             text = viewModel.selectedDskName.uppercase()
                                 .replace(".dsk", "")
@@ -100,13 +100,19 @@ fun RenderDskDialog(
                             fontSize = dskDialogTitleFontSize,
                             color = dskDialogTitleFontColor
                         )
-                        IconButton(onClick = onDismiss) {
+                        IconButton(
+                            onClick = onDismiss,
+                            modifier = Modifier
+                                .width(48.dp)
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Close",
-                                tint = Color.White
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
                             )
                         }
+
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))

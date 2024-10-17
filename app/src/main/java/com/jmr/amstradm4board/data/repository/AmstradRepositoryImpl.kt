@@ -9,6 +9,7 @@ import com.jmr.amstradm4board.domain.model.Command
 import com.jmr.amstradm4board.domain.model.DataFile
 import com.jmr.amstradm4board.domain.model.DataFileType
 import com.jmr.amstradm4board.ui.Utils.capitalizeFirstLetter
+import com.jmr.amstradm4board.ui.Utils.logs
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.initPath
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.isMock
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +53,7 @@ class AmstradRepositoryImpl @Inject constructor(
             Command.START_CART -> "http://$ip/config.cgi?${command.value}=$param1"
         }
 
-        Log.v("MY_LOGS", "URL: $url")
+        logs("URL: $url")
 
         return url
     }
@@ -115,10 +116,14 @@ class AmstradRepositoryImpl @Inject constructor(
     private suspend fun getDataList(path: String): List<DataFile> {
         val response = apiService.downloadFolderFile()
 
+        logs("getDataList() -> Response: $response")
+
         if (response.isSuccessful) {
-            Log.v("MY_LOG", "")
             response.body()?.let { body ->
                 val fileContent = body.string()
+
+                logs("getDataList() -> fileContent: $fileContent")
+
                 return UtilsRepository.parseFileContent(path, fileContent)
             }
         }

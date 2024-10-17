@@ -42,6 +42,8 @@ class MainScreenConfig {
         const val resetCPCText = "RESET CPC"
         const val resetM4Text = "RESET M4"
         const val backButtonText = "BACK"
+        const val noListMessageText = "Impossible to connect.\nTry again"
+        const val noListButtonText = "Retry"
 
         val screenBackground = black
 

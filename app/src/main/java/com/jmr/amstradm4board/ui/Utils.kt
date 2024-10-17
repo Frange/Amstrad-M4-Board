@@ -14,7 +14,8 @@ object Utils {
     )
 
     fun String.capitalizeFirstLetter(): String {
-        return this.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+        return this.lowercase()
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     }
 
     fun getDskBackground(context: Context, drawableList: List<String>?, dskName: String): Int {
@@ -37,7 +38,8 @@ object Utils {
             val drawableNameCleaned = cleanName(drawableName)
             val score = similarityScore(dskCleanedName, drawableNameCleaned)
             if (score > bestScore) {
-                Log.v("MY_LOGS", "Best score is: $score - $drawableName ---> $dskCleanedName")
+                logs("Best score is: $score - $drawableName ---> $dskCleanedName")
+
                 bestScore = score
                 bestMatchId =
                     context.resources.getIdentifier(drawableName, "drawable", context.packageName)
@@ -85,10 +87,15 @@ object Utils {
     }
 
     private fun similarityScore(str1: String, str2: String): Int {
-        val words1 = str1.split("_", "(", ")", " ").filter { it.length > 2 } // Filtrar palabras cortas
+        val words1 =
+            str1.split("_", "(", ")", " ").filter { it.length > 2 } // Filtrar palabras cortas
         val words2 = str2.split("_", "(", ")", " ").filter { it.length > 2 }
 
         return words1.intersect(words2.toSet()).size
+    }
+
+    fun logs(param: String) {
+        Log.v("MY_LOGS", param)
     }
 
 }
