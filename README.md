@@ -4,7 +4,7 @@ This is a personal project that enables the navigation and execution of programs
 
 Collaborations and Credits
 
-The project has benefited from valuable contributions from the community. Specifically, the images used have been generously donated by MiguelSky from the Amstrad.es forum, adding a unique visual touch that complements the functionality of the project. Furthermore, the credits for the M4 board, as well as the connections and commands used to operate it, go to Duke (author of the repository on GitHub: M4Duke).
+The project has benefited from valuable contributions from the community. Specifically, the images used have been generously donated by MiguelSky from the Amstrad.es forum (more than 4600 screenshots included inside the app), adding a unique visual touch that complements the functionality of the project. Furthermore, the credits for the M4 board, as well as the connections and commands used to operate it, go to Duke (author of the repository on GitHub: M4Duke).
 
 License and Usage
 
