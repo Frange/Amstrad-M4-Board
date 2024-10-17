@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jmr.amstradm4board.data.repository.AmstradRepository
 import com.jmr.amstradm4board.data.repository.AmstradSharedPreference
+import com.jmr.amstradm4board.data.service.AmstradApiService
 import com.jmr.amstradm4board.di.NetworkModule
 import com.jmr.amstradm4board.di.NetworkModule.provideOkHttpClient
 import com.jmr.amstradm4board.domain.model.DataFile
@@ -68,6 +69,7 @@ class AmstradViewModel @Inject constructor(
                 _dataFileList.value = items
                 listState = ListState.Loaded(items)
             } catch (e: Exception) {
+                logs("Exception: ${e.cause} - ${e.message}")
                 lastPath = initPath
                 listState = ListState.Error
             }
@@ -89,9 +91,12 @@ class AmstradViewModel @Inject constructor(
         if (isValidIpAddress(newIp)) {
             sharedPreference.saveIpAddress(newIp)
             ipAddress = newIp
-            NetworkModule.updateRetrofit(newIp, sharedPreference, provideOkHttpClient())
+
+            val newRetrofit = NetworkModule.recreateRetrofit(newIp, provideOkHttpClient())
+            repository.updateApiService(newRetrofit.create(AmstradApiService::class.java))
         }
     }
+
 
     fun runGame(path: String) {
         viewModelScope.launch {

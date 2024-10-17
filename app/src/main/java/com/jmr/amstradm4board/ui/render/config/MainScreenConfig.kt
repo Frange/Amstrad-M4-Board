@@ -14,6 +14,7 @@ class MainScreenConfig {
         const val defaultIp = "192.168.1.39"
         const val initPath = ""
 //        const val initPath = "games/aaa%20JM"
+//        const val dirURL = "http://192.168.1.38/sd/m4/dir.txt"
 
         val black = Color(0xFF000000)
 

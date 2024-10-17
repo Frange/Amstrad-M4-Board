@@ -35,7 +35,8 @@ object NetworkModule {
         sharedPreference: AmstradSharedPreference,
         okHttpClient: OkHttpClient
     ): Retrofit {
-        return retrofit ?: createRetrofit(sharedPreference.getLastIpAddress(), okHttpClient)
+        val ipAddress = sharedPreference.getLastIpAddress()
+        return retrofit ?: createRetrofit(ipAddress, okHttpClient)
     }
 
     private fun createRetrofit(ipAddress: String, okHttpClient: OkHttpClient): Retrofit {
@@ -52,9 +53,19 @@ object NetworkModule {
             }
     }
 
-    fun updateRetrofit(newIp: String, sharedPreference: AmstradSharedPreference, okHttpClient: OkHttpClient) {
-        sharedPreference.saveIpAddress(newIp)
-        retrofit = createRetrofit(newIp, okHttpClient)
+    // Añadir un método para forzar la recreación del Retrofit
+    fun recreateRetrofit(newIp: String, okHttpClient: OkHttpClient): Retrofit {
+        val baseUrl = "http://$newIp/"
+        logs("Recreating Retrofit with new BaseUrl: $baseUrl")
+
+        // Reasigna Retrofit con la nueva instancia
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().also {
+                retrofit = it
+            }
     }
 
     @Provides
@@ -62,5 +73,4 @@ object NetworkModule {
     fun provideXferApi(retrofit: Retrofit): AmstradApiService {
         return retrofit.create(AmstradApiService::class.java)
     }
-
 }

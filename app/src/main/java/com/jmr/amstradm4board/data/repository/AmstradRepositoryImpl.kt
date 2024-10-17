@@ -1,7 +1,6 @@
 package com.jmr.amstradm4board.data.repository
 
 import android.app.Application
-import android.util.Log
 import com.jmr.amstradm4board.data.repository.UtilsRepository.encodeForUrl
 import com.jmr.amstradm4board.data.repository.UtilsRepository.getTypeOfFile
 import com.jmr.amstradm4board.data.service.AmstradApiService
@@ -22,7 +21,7 @@ import javax.inject.Inject
 
 class AmstradRepositoryImpl @Inject constructor(
     private val context: Application,
-    private val apiService: AmstradApiService,
+    private var apiService: AmstradApiService,
     private val client: OkHttpClient
 ) : AmstradRepository {
 
@@ -56,6 +55,10 @@ class AmstradRepositoryImpl @Inject constructor(
         logs("URL: $url")
 
         return url
+    }
+
+    override fun updateApiService(amstradApiService: AmstradApiService) {
+        apiService = amstradApiService
     }
 
     override suspend fun navigate(ip: String, path: String): List<DataFile> {
