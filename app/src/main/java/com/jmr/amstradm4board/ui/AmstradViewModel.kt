@@ -29,6 +29,7 @@ class AmstradViewModel @Inject constructor(
 
     sealed class ListState {
         object Loading : ListState()
+        object Ready : ListState()
         data class Loaded(val items: List<DataFile>) : ListState()
         object Error : ListState()
     }
@@ -46,7 +47,7 @@ class AmstradViewModel @Inject constructor(
     var ipAddress by mutableStateOf(getIp())
         private set
 
-    var listState by mutableStateOf<ListState>(ListState.Loading)
+    var listState by mutableStateOf<ListState>(ListState.Ready)
         private set
 
     fun toggleRefreshing(refreshing: Boolean) {
@@ -62,27 +63,36 @@ class AmstradViewModel @Inject constructor(
     }
 
     fun navigate(path: String) {
-        listState = ListState.Loading
-        viewModelScope.launch {
-            try {
-                val items = repository.navigate(ipAddress, path)
-                _dataFileList.value = items
-                listState = ListState.Loaded(items)
-            } catch (e: Exception) {
-                logs("Exception: ${e.cause} - ${e.message}")
-                lastPath = initPath
-                listState = ListState.Error
+        if (listState != ListState.Loading) {
+            listState = ListState.Loading
+            viewModelScope.launch {
+                try {
+                    val items = repository.navigate(ipAddress, path)
+                    _dataFileList.value = items
+                    lastPath = path
+                    listState = ListState.Loaded(items)
+                } catch (e: Exception) {
+                    logs("Exception: ${e.cause} - ${e.message}")
+                    lastPath = initPath
+                    listState = ListState.Error
+                }
             }
         }
     }
 
+
     fun openDSK(path: String, onFilesLoaded: (List<DataFile>) -> Unit) {
-        viewModelScope.launch {
-            try {
-                val dskFiles = repository.navigate(ipAddress, path)
-                onFilesLoaded(dskFiles)
-            } catch (e: Exception) {
-                logs("Exception: ${e.message}")
+        if (listState != ListState.Loading) {
+            listState = ListState.Loading
+            viewModelScope.launch {
+                try {
+                    val dskFiles = repository.navigate(ipAddress, path)
+                    listState = ListState.Ready
+                    onFilesLoaded(dskFiles)
+                } catch (e: Exception) {
+                    logs("Exception: ${e.message}")
+                    listState = ListState.Error
+                }
             }
         }
     }

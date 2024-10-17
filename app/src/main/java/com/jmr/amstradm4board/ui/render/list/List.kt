@@ -91,6 +91,7 @@ fun RenderListWithErrorState(
             }
         }
 
+        is AmstradViewModel.ListState.Ready,
         is AmstradViewModel.ListState.Loaded -> {
             RenderList(viewModel)
         }
