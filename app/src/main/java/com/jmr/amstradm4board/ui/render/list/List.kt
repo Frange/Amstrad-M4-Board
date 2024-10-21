@@ -133,6 +133,10 @@ fun RenderList(viewModel: AmstradViewModel) {
                             viewModel.navigate(fullPath)
                         }
 
+                        DataFileType.GAME -> {
+                            viewModel.runGame(fullPath)
+                        }
+
                         else -> {
                             // Nothing to do
                         }
