@@ -1,5 +1,6 @@
 package com.jmr.amstradm4board.ui.render
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +31,7 @@ import com.jmr.amstradm4board.ui.drawableList
 import com.jmr.amstradm4board.ui.isFirstTime
 import com.jmr.amstradm4board.ui.render.component.RenderConnectionRow
 import com.jmr.amstradm4board.ui.render.component.RenderBackButton
-import com.jmr.amstradm4board.ui.render.list.RenderList
+import com.jmr.amstradm4board.ui.render.component.RenderBottomVersion
 import com.jmr.amstradm4board.ui.render.component.RenderResetButtonsRow
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.brightYellowScreen
 import com.jmr.amstradm4board.ui.render.config.MainScreenConfig.Companion.titleText
@@ -39,7 +40,7 @@ import com.jmr.amstradm4board.ui.render.list.RenderListWithErrorState
 
 
 @Composable
-fun RenderMainScreen() {
+fun RenderMainScreen(context: Context) {
     val viewModel: AmstradViewModel = hiltViewModel()
     val path by remember { mutableStateOf(viewModel.lastPath) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -83,6 +84,8 @@ fun RenderMainScreen() {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 RenderBackButton(viewModel)
+
+                RenderBottomVersion(context)
             }
         }
     )
@@ -114,4 +117,5 @@ fun RenderHeaderRow() {
             modifier = Modifier.fillMaxWidth()
         )
     }
+
 }

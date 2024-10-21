@@ -109,4 +109,14 @@ object Utils {
         )
         return ip.matches(ipRegex)
     }
+
+    fun getBuildNumber(context: Context): Int {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        return packageInfo.versionCode
+    }
+
+    fun getVersionName(context: Context): String {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        return packageInfo.versionName
+    }
 }

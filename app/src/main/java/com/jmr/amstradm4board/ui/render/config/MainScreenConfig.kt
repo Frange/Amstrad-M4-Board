@@ -24,6 +24,7 @@ class MainScreenConfig {
         val darkGrayKeyboard = Color(0xFF171717)
         val blackKeyboard = Color(0xFF222222)
         val lightWhiteKeyboard = Color(0xFFD3D3D3)
+        val lightGreenKeyboard = Color(0xFF5CDF70)
         val greenKeyboard = Color(0xFF4CAF50)
         val darkGreenKeyboard = Color(0xFF226600)
         val blueKeyboard = Color(0xFF2222CC)
@@ -39,6 +40,7 @@ class MainScreenConfig {
 
         //TOP
         const val titleText = "Amstrad M4"
+        const val bottomVersionText = "Version"
         const val enterText = "ENTER"
         const val resetCPCText = "RESET CPC"
         const val resetM4Text = "RESET M4"
